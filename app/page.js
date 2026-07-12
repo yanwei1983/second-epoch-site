@@ -20,14 +20,33 @@ export default function Home() {
   const [faction,setFaction]=useState(0); const [ship,setShip]=useState(0); const [menu,setMenu]=useState(false);
   useEffect(()=>{
     const root=document.documentElement;
-    const reveal=new IntersectionObserver(entries=>entries.forEach(entry=>entry.isIntersecting&&entry.target.classList.add('is-visible')),{threshold:.14});
-    document.querySelectorAll('.band, .section-head, .ship-stage, .career-grid').forEach(el=>reveal.observe(el));
+    const sections=[...document.querySelectorAll('.band')];
+    const clamp=n=>Math.max(0,Math.min(1,n));
     let raf=0;
-    const update=()=>{const max=document.documentElement.scrollHeight-innerHeight;root.style.setProperty('--scroll',max>0?scrollY/max:0);root.style.setProperty('--drift',`${Math.min(scrollY*.16,140)}px`);raf=0};
+    const update=()=>{
+      const vh=innerHeight,max=document.documentElement.scrollHeight-vh;
+      root.style.setProperty('--scroll',max>0?scrollY/max:0);
+      root.style.setProperty('--drift',`${Math.min(scrollY*.16,140)}px`);
+      const hero=document.querySelector('.hero');
+      root.style.setProperty('--hero-p',clamp(scrollY/(hero?.offsetHeight||vh)));
+      sections.forEach(section=>{
+        const rect=section.getBoundingClientRect();
+        const enter=clamp((vh-rect.top)/(vh*.58));
+        const leave=clamp(rect.bottom/(vh*.52));
+        const visibility=Math.min(enter,leave);
+        const journey=clamp((vh-rect.top)/(vh+rect.height));
+        const direction=enter<1?1:leave<1?-1:0;
+        section.style.setProperty('--scene-v',visibility.toFixed(4));
+        section.style.setProperty('--scene-p',journey.toFixed(4));
+        section.style.setProperty('--scene-y',`${direction*(1-visibility)*68}px`);
+        section.style.setProperty('--scene-scale',(0.94+visibility*.06).toFixed(4));
+      });
+      raf=0;
+    };
     const onScroll=()=>{if(!raf)raf=requestAnimationFrame(update)};
     const onMove=e=>{root.style.setProperty('--mx',`${(e.clientX/innerWidth-.5)*18}px`);root.style.setProperty('--my',`${(e.clientY/innerHeight-.5)*12}px`)};
-    update();addEventListener('scroll',onScroll,{passive:true});addEventListener('pointermove',onMove,{passive:true});
-    return()=>{reveal.disconnect();removeEventListener('scroll',onScroll);removeEventListener('pointermove',onMove);cancelAnimationFrame(raf)};
+    update();addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll,{passive:true});addEventListener('pointermove',onMove,{passive:true});
+    return()=>{removeEventListener('scroll',onScroll);removeEventListener('resize',onScroll);removeEventListener('pointermove',onMove);cancelAnimationFrame(raf)};
   },[]);
   return <main>
     <div className="scroll-progress" aria-hidden="true"/><div className="grain" aria-hidden="true"/>
