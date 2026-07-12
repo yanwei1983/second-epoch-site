@@ -21,7 +21,7 @@ export default function Home(){
   },[]);
   const stage=stages[active];
   return <main className="journey">
-    <div className="flight-bg" aria-hidden="true"><div className="space-dust"/><div className="nav-lane l1"/><div className="nav-lane l2"/><div className="fleet-mark m1"/><div className="fleet-mark m2"/><div className="gate-flare"/></div>
+    <div className="flight-bg" aria-hidden="true">{['orbit','cruise','industry','conflict','deep','gate'].map((name,i)=><div className={`scene-bg bg-${name} ${active===i?'active':''}`} key={name}/>)}<div className="space-dust"/><div className="nav-lane l1"/><div className="nav-lane l2"/><div className="fleet-mark m1"/><div className="fleet-mark m2"/><div className="gate-flare"/></div>
     <div className="hud-frame" aria-hidden="true"><span className="corner tl"/><span className="corner tr"/><span className="corner bl"/><span className="corner br"/></div>
     <div className="route-progress" aria-hidden="true"><span style={{height:`${(active/(stages.length-1))*100}%`}}/></div>
     <aside className="side-chapters" aria-label="航线章节">{stages.map((s,i)=><a className={active===i?'active':''} href={`#${s.id}`} aria-label={s.label} title={s.label} key={s.id}><i/><span>{s.label}</span></a>)}</aside>
