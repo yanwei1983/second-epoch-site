@@ -9,6 +9,7 @@ import './scenes.css';
 import './pages.css';
 import './dwell.css';
 import './epoch.css';
+import './overlay.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export const metadata = { title: '第二纪元 | 开放宇宙星舰战争 MMO', description: '玩家行为会改变世界、并持续产生机遇与风险的开放宇宙星舰战争 MMO。' };

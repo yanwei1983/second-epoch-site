@@ -1,0 +1,72 @@
+/* Transition overlays sit above the outgoing and incoming main chapters. */
+.transition-page {
+  z-index: 30;
+  min-height: 135vh !important;
+  margin-top: -42vh;
+  margin-bottom: -42vh;
+  padding-top: 32vh;
+  padding-bottom: 32vh;
+  background: linear-gradient(180deg, transparent 0%, rgb(3 6 8 / calc(var(--v) * .55)) 24%, rgb(3 6 8 / calc(var(--v) * .94)) 43%, rgb(3 6 8 / calc(var(--v) * .94)) 57%, rgb(3 6 8 / calc(var(--v) * .55)) 76%, transparent 100%) !important;
+  pointer-events: none;
+}
+.transition-page.ship-page {
+  min-height: 155vh !important;
+  margin-top: -45vh;
+  margin-bottom: -45vh;
+  padding-top: 34vh;
+  padding-bottom: 34vh;
+  pointer-events: auto;
+  background: linear-gradient(180deg, transparent 0%, rgb(3 6 8 / calc(var(--v) * .72)) 22%, rgb(3 6 8 / calc(var(--v) * .97)) 40%, rgb(3 6 8 / calc(var(--v) * .97)) 60%, rgb(3 6 8 / calc(var(--v) * .72)) 78%, transparent 100%) !important;
+}
+.transition-page.dust-page { background: transparent !important; }
+.transition-page.loop-page { padding-top: 28vh; padding-bottom: 28vh; }
+.transition-page.gate-page { padding-top: 30vh; padding-bottom: 30vh; }
+.ship-blueprint img { border-radius: 2px; filter: drop-shadow(0 28px 42px #000); object-fit: contain; }
+
+.world-causality {
+  position: relative;
+  width: min(650px, 48vw);
+  height: 76vh;
+  min-height: 560px;
+  padding: 50px 46px 34px;
+  border: 1px solid rgba(190,221,229,.2);
+  background: linear-gradient(145deg,rgba(7,18,23,.94),rgba(3,7,9,.82));
+  opacity: var(--v);
+  transform: translateX(calc((1 - var(--v)) * 90px));
+  overflow: hidden;
+}
+.world-causality:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,transparent 49.8%,rgba(150,205,220,.05) 50%,transparent 50.2%),linear-gradient(transparent 49.8%,rgba(150,205,220,.04) 50%,transparent 50.2%);
+  background-size: 42px 42px;
+}
+.causality-live { position: relative; font: 9px Oswald; letter-spacing: 3px; color: #8ea1a7; }
+.causality-live i { display: inline-block; width: 5px; height: 5px; margin-right: 8px; border-radius: 50%; background: #70d39a; box-shadow: 0 0 9px #70d39a; }
+.causality-chain { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 7px 34px; margin-top: 24px; }
+.causality-chain>div { position: relative; height: 62px; padding: 11px 15px; border-left: 2px solid rgba(174,214,225,.48); background: rgba(12,25,30,.84); animation: worldNode 3.6s ease-in-out infinite; animation-delay: calc(var(--n) * .35s); }
+.causality-chain small { display: block; font: 8px Oswald; color: #71868d; }
+.causality-chain b { font: 600 13px 'Noto Serif SC'; }
+.causality-chain i { position: absolute; right: 10px; bottom: -12px; color: #6e8991; font-size: 8px; }
+.event-window { position: relative; margin-top: 20px; padding: 18px 20px; border: 1px solid rgba(206,229,235,.25); background: rgba(4,10,13,.9); }
+.event-window>span { font: 8px Oswald; letter-spacing: 2px; color: #82969c; }
+.event-window b { display: block; margin: 8px 0; font: 600 17px 'Noto Serif SC'; }
+.event-window p { font-size: 10px; color: #9fadb1; }
+.event-window small { color: #d7b064; font: 9px Oswald; }
+.intel-feeds { position: relative; display: flex; gap: 8px; margin-top: 14px; }
+.intel-feeds span { flex: 1; padding: 8px; border: 1px solid rgba(205,226,231,.14); text-align: center; font-size: 9px; color: #7f9197; }
+
+@keyframes worldNode {
+  0%,70%,100% { border-left-color: rgba(174,214,225,.35); }
+  15%,45% { border-left-color: #dcebed; box-shadow: inset 14px 0 25px rgba(151,205,219,.06); }
+}
+
+@media(max-width:900px) {
+  .transition-page { min-height: 125vh !important; margin-top: -36vh; margin-bottom: -36vh; padding: 30vh 24px; }
+  .transition-page.ship-page { min-height: 165vh !important; margin-top: -38vh; margin-bottom: -38vh; padding: 38vh 24px; }
+  .transition-page.loop-page { min-height: 140vh !important; padding-top: 34vh; padding-bottom: 34vh; }
+  .world-causality { width: 100%; height: auto; min-height: 520px; padding: 30px 22px; }
+  .causality-chain { gap: 7px 12px; }
+  .dynamic-page .page-sticky { overflow: auto; }
+}
