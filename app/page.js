@@ -17,12 +17,15 @@ const ships = [
 function IconButton({icon,label,onClick}) { return <button className="icon-btn" aria-label={label} title={label} onClick={onClick}><i className={`fa-solid ${icon}`}/></button> }
 
 export default function Home() {
-  const [faction,setFaction]=useState(0); const [ship,setShip]=useState(0); const [menu,setMenu]=useState(false);
+  const [faction,setFaction]=useState(0); const [ship,setShip]=useState(0); const [menu,setMenu]=useState(false); const [activeScene,setActiveScene]=useState(0);
   useEffect(()=>{
     const root=document.documentElement;
     const sections=[...document.querySelectorAll('.band')];
+    const sceneEls=[document.querySelector('.hero'),...sections];
+    const sceneObserver=new IntersectionObserver(entries=>{const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(visible)setActiveScene(sceneEls.indexOf(visible.target))},{threshold:[.25,.5,.75]});
+    sceneEls.forEach(scene=>sceneObserver.observe(scene));
     const clamp=n=>Math.max(0,Math.min(1,n));
-    let raf=0;
+    let timer=0;
     const update=()=>{
       const vh=innerHeight,max=document.documentElement.scrollHeight-vh;
       root.style.setProperty('--scroll',max>0?scrollY/max:0);
@@ -40,16 +43,25 @@ export default function Home() {
         section.style.setProperty('--scene-p',journey.toFixed(4));
         section.style.setProperty('--scene-y',`${direction*(1-visibility)*68}px`);
         section.style.setProperty('--scene-scale',(0.94+visibility*.06).toFixed(4));
+        section.style.opacity=visibility.toFixed(4);
+        const title=section.querySelector(':scope > .section-head, :scope > .section-label, .career-copy');
+        const depth=section.querySelector('.map-wrap, .sigil, .ship-visual, .career-grid');
+        const counter=section.querySelector('.world-stats, .faction-panel, .ship-copy');
+        if(title)title.style.transform=`translate3d(0,${(journey-.5)*-92}px,0)`;
+        if(depth)depth.style.transform=`translate3d(0,${(journey-.5)*-138}px,0) scale(${.96+visibility*.04})`;
+        if(counter)counter.style.transform=`translate3d(0,${(journey-.5)*-54}px,0)`;
       });
-      raf=0;
+      let closest=0,distance=Infinity;
+      sceneEls.forEach((scene,index)=>{const rect=scene.getBoundingClientRect(),d=Math.abs(rect.top+rect.height/2-vh/2);if(d<distance){distance=d;closest=index}});
+      setActiveScene(current=>current===closest?current:closest);
     };
-    const onScroll=()=>{if(!raf)raf=requestAnimationFrame(update)};
     const onMove=e=>{root.style.setProperty('--mx',`${(e.clientX/innerWidth-.5)*18}px`);root.style.setProperty('--my',`${(e.clientY/innerHeight-.5)*12}px`)};
-    update();addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll,{passive:true});addEventListener('pointermove',onMove,{passive:true});
-    return()=>{removeEventListener('scroll',onScroll);removeEventListener('resize',onScroll);removeEventListener('pointermove',onMove);cancelAnimationFrame(raf)};
+    update();root.classList.add('motion-ready');timer=setInterval(update,50);addEventListener('pointermove',onMove,{passive:true});
+    return()=>{root.classList.remove('motion-ready');sceneObserver.disconnect();removeEventListener('pointermove',onMove);clearInterval(timer)};
   },[]);
   return <main>
     <div className="scroll-progress" aria-hidden="true"/><div className="grain" aria-hidden="true"/>
+    <aside className="scene-rail" aria-label="章节导航">{[['top','序章'],['world','星域'],['factions','势力'],['ships','舰船'],['careers','生涯']].map((item,i)=><a className={activeScene===i?'active':''} href={`#${item[0]}`} aria-label={item[1]} title={item[1]} key={item[0]}><span>{String(i+1).padStart(2,'0')}</span></a>)}</aside>
     <header className="topbar">
       <a className="brand" href="#top" aria-label="断层纪元首页"><span className="brand-mark">F</span><span>断层纪元<small>FRACTURE ERA</small></span></a>
       <nav className={menu?'open':''}><a href="#world">宇宙</a><a href="#factions">势力</a><a href="#ships">舰船</a><a href="#careers">生涯</a></nav>
