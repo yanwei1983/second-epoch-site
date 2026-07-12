@@ -24,10 +24,11 @@ const nav = [
 export default function Home(){
   const [active,setActive]=useState('home');
   const [faction,setFaction]=useState(0);
+  const [ship,setShip]=useState(0);
   const [art,setArt]=useState(null);
-  const [community,setCommunity]=useState(0);
   const [menu,setMenu]=useState(false);
   const selected=factions[faction];
+  const selectedShip=factions[ship];
 
   useEffect(()=>{
     const root=document.documentElement;
@@ -38,7 +39,9 @@ export default function Home(){
       pages.forEach(el=>{
         const r=el.getBoundingClientRect();
         const progress=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight+r.height)));
-        const visible=Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.9));
+        const enter=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight*.45)));
+        const exit=Math.max(0,Math.min(1,r.bottom/(innerHeight*.45)));
+        const visible=el.dataset.main?Math.min(enter,exit):Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.9));
         el.style.setProperty('--p',progress.toFixed(4));
         el.style.setProperty('--v',visible.toFixed(4));
         if(el.dataset.main){const d=Math.abs(r.top+r.height/2-innerHeight/2);if(d<distance){distance=d;best=el.id}}
@@ -52,7 +55,8 @@ export default function Home(){
   },[]);
 
   return <main className="epoch-site">
-    <div className="global-space" aria-hidden="true"><div className="stars"/><div className="route-line"/><div className="route-fill"/></div>
+    <div className="global-space" aria-hidden="true"><div className="stars"/></div>
+    <aside className="route-indicator" aria-label="主分页导航"><i className="route-rail"/><b className="route-current"/>{nav.map(([id,label],i)=><a key={id} href={`#${id}`} className={active===id?'active':''} style={{'--n':i}} aria-label={label}><i/><span>{label}</span></a>)}</aside>
     <header className="epoch-nav">
       <a href="#home" className="epoch-brand"><span>II</span><b>第二纪元<small>THE SECOND EPOCH</small></b></a>
       <nav className={menu?'open':''}>{nav.map(([id,label])=><a key={id} className={active===id?'active':''} href={`#${id}`}>{label}</a>)}</nav>
@@ -77,12 +81,12 @@ export default function Home(){
 
     <section id="factions" data-main data-scroll-page className="main-page faction-page"><div className="page-sticky">
       <div className="faction-art" style={{backgroundImage:`linear-gradient(90deg,rgba(3,6,8,.96) 0%,rgba(3,6,8,.46) 48%,rgba(3,6,8,.08)),url('/factions/${selected.id}.png')`}}/>
-      <div className="faction-tabs">{factions.map((f,i)=><button key={f.id} className={faction===i?'active':''} onClick={()=>setFaction(i)}><img src={`/badges/${f.id}.png`} alt=""/><span>{String(i+1).padStart(2,'0')}</span>{f.name}</button>)}</div>
+      <div className="faction-tabs">{factions.map((f,i)=><button key={f.id} className={faction===i?'active':''} onClick={()=>{setFaction(i);setShip(i)}}><img src={`/badges/${f.id}.png`} alt=""/><span>{String(i+1).padStart(2,'0')}</span>{f.name}</button>)}</div>
       <div className="faction-copy"><span className="eyebrow">EIGHT POWERS / MAJOR FACTION {String(faction+1).padStart(2,'0')}</span><h2>{selected.name}</h2><small>{selected.en}</small><p>{selected.desc}</p><div className="faction-stats"><span>{selected.strength}</span><span>{selected.weak}</span></div></div>
       <div className="hostile-strip"><span>边境威胁</span><b>黑星海盗团</b><b>光明狂热者</b></div>
     </div></section>
 
-    <section data-scroll-page className="transition-page ship-page"><div className="ship-blueprint"><img src={`/ships/${selected.id}.png`} alt={selected.ship}/><div className="scan-line"/></div><div className="ship-copy"><span>{selected.en} / STANDARD ISSUE</span><h2>{selected.ship}</h2><p>阵营选择已同步至舰船档案。滚动离开时，舰体将进入装配航线。</p><div><b>舰体许可</b><em>AUTHORIZED</em></div></div></section>
+    <section data-scroll-page className="transition-page ship-page"><div className="ship-blueprint"><img key={selectedShip.id} src={`/ships/${selectedShip.id}.png`} alt={selectedShip.ship}/><div className="scan-line"/><span className="ship-counter">{String(ship+1).padStart(2,'0')} / {String(factions.length).padStart(2,'0')}</span></div><div className="ship-copy"><span>{selectedShip.en} / FRIGATE ARCHIVE</span><h2>{selectedShip.ship}</h2><p>{selectedShip.name}护卫舰档案。可循环查看六大主要势力的标准护卫舰。</p><div><b>舰体许可</b><em>AUTHORIZED</em></div><div className="ship-controls"><button onClick={()=>setShip((ship-1+factions.length)%factions.length)} aria-label="上一艘护卫舰"><i className="fa-solid fa-arrow-left"/></button><div>{factions.map((f,i)=><button key={f.id} className={ship===i?'active':''} onClick={()=>setShip(i)} aria-label={`查看${f.ship}`}/>)}</div><button onClick={()=>setShip((ship+1)%factions.length)} aria-label="下一艘护卫舰"><i className="fa-solid fa-arrow-right"/></button></div></div></section>
 
     <section id="dynamic" data-main data-scroll-page className="main-page dynamic-page"><div className="page-sticky"><div className="dynamic-copy"><span className="eyebrow">PERSISTENT WORLD SIMULATION</span><h2>世界不会等待<br/>玩家上线。</h2><p>玩家行为改变空间站状态，推动星系局势、区域变化与势力决策，最终形成新的风险与机遇窗口。</p><div className="change-list"><span>价格与订单</span><span>护航与运输需求</span><span>巡逻强度</span><span>冲突与繁荣</span><span>限时资源和任务</span></div></div><div className="dynamic-radar"><i/><i/><i/><b>1000+<small>SCENES</small></b>{['经济','治安','工业','情报','政治'].map((x,i)=><span key={x} style={{'--n':i}}>{x}</span>)}</div></div></section>
 
@@ -92,9 +96,15 @@ export default function Home(){
 
     <section data-scroll-page className="transition-page gate-page"><div className="gate-core"><i/><i/><i/></div><div><span>GATE SYNCHRONIZED</span><h2>下一个跃迁点，<br/>由你选择。</h2></div></section>
 
-    <section id="community" data-main data-scroll-page className="main-page community-page"><div className="page-sticky"><div className="community-title"><span className="eyebrow">JOIN THE FLEET</span><h2>加入星际社区</h2><p>在世界开放前，先找到与你并肩航行的人。</p></div><div className="community-panel"><div className="community-tabs">{['Discord','官方论坛','社交媒体'].map((x,i)=><button className={community===i?'active':''} onClick={()=>setCommunity(i)} key={x}>{x}</button>)}</div><div className="community-content"><span>{['FLEET COMMS','CAPTAIN FORUM','STAR NETWORK'][community]}</span><h3>{['加入实时舰队频道','参与世界设定与测试讨论','追踪开发日志和星际新闻'][community]}</h3><a href="#home">建立连接 <i className="fa-solid fa-arrow-right"/></a></div></div><form className="subscribe" onSubmit={e=>e.preventDefault()}><label htmlFor="email">测试资格与开发通讯</label><div><input id="email" type="email" placeholder="舰长邮箱" required/><button type="submit">申请订阅</button></div><small>订阅制为核心，免费试玩为进入这个世界的第一扇门。</small></form></div></section>
+    <section id="community" data-main data-scroll-page className="main-page community-page"><div className="page-sticky"><div className="community-title"><span className="eyebrow">JOIN THE FLEET</span><h2>加入星际社区</h2><p>与全球指挥官一起，开启你的银河征程</p></div><div className="community-cards">{[
+      ['fa-brands fa-steam','STEAM','将《第二纪元》加入愿望单，获取最新游戏资讯','加入愿望单'],
+      ['fa-brands fa-discord','DISCORD','加入官方 Discord，与开发者和舰长直接交流','加入 Discord'],
+      ['fa-brands fa-weibo','微博','关注官方微博，获取中文独家内容','关注微博']
+    ].map(([icon,title,copy,action])=><article key={title}><i className={icon}/><h3>{title}</h3><p>{copy}</p><a href="#home">{action} <i className="fa-solid fa-arrow-right"/></a></article>)}</div><form className="subscribe" onSubmit={e=>e.preventDefault()}><i className="fa-regular fa-envelope"/><h3>订阅星际通讯</h3><p>获取最新更新、测试资格和独家内容</p><div><input id="email" type="email" placeholder="输入你的邮箱地址" required/><button type="submit">订阅</button></div></form></div></section>
 
     {art!==null&&<div className="art-modal" role="dialog" aria-modal="true"><button className="modal-close" onClick={()=>setArt(null)} aria-label="关闭"><i className="fa-solid fa-xmark"/></button><button className="modal-prev" onClick={()=>setArt((art-1+gallery.length)%gallery.length)} aria-label="上一张"><i className="fa-solid fa-arrow-left"/></button><figure><img src={gallery[art].src} alt={gallery[art].title}/><figcaption><b>{gallery[art].title}</b><span>{gallery[art].meta}</span><small>{String(art+1).padStart(2,'0')} / {String(gallery.length).padStart(2,'0')}</small></figcaption></figure><button className="modal-next" onClick={()=>setArt((art+1)%gallery.length)} aria-label="下一张"><i className="fa-solid fa-arrow-right"/></button></div>}
-    <footer><span>© 2026 第二纪元</span><span>THE SECOND EPOCH</span><a href="#home">返回轨道</a></footer>
+    <footer className="site-footer"><div className="footer-brand"><b><i className="fa-solid fa-ring"/> 第二纪元</b><p>征服银河<br/>从此刻开始</p></div>{[
+      ['游戏','关于游戏','派系介绍','玩法特色','新闻资讯'],['社区','官方论坛','Discord','Steam 社区','玩家手册'],['支持','帮助中心','系统要求','联系我们','反馈问题'],['法律','隐私政策','用户协议','Cookie 政策']
+    ].map(([title,...items])=><div className="footer-column" key={title}><b>{title}</b>{items.map(x=><a href="#home" key={x}>{x}</a>)}</div>)}<div className="footer-bottom"><span>© 2026 第二纪元. 保留所有权利。</span><div><a href="#home" aria-label="Steam"><i className="fa-brands fa-steam"/></a><a href="#home" aria-label="Discord"><i className="fa-brands fa-discord"/></a><a href="#home" aria-label="视频频道"><i className="fa-brands fa-youtube"/></a><a href="#home" aria-label="X"><i className="fa-brands fa-x-twitter"/></a></div><span>Second Epoch Studios　Nebula Engine　StarForge Interactive</span></div></footer>
   </main>;
 }
