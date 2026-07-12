@@ -8,9 +8,10 @@ import './replica-fixes.css';
 import './scenes.css';
 import './pages.css';
 import './dwell.css';
+import './epoch.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-export const metadata = { title: '断层纪元 | 星海沙盒 MMO', description: '在破碎星域中定义你的秩序。' };
+export const metadata = { title: '第二纪元 | 开放宇宙星舰战争 MMO', description: '玩家行为会改变世界、并持续产生机遇与风险的开放宇宙星舰战争 MMO。' };
 
 export default function RootLayout({ children }) {
   return <html lang="zh-CN"><body>{children}</body></html>;
