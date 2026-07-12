@@ -25,7 +25,7 @@
   place-items: center;
   overflow: hidden;
   opacity: clamp(0, calc(var(--v) * 1.85), 1) !important;
-  transform: translateY(calc((.5 - var(--p)) * 54px)) scale(calc(.97 + var(--v) * .03)) !important;
+  transform: translateY(calc((.5 - var(--p)) * 200vh)) scale(calc(.97 + var(--v) * .03)) !important;
   background: linear-gradient(180deg,transparent 0%,rgb(2 4 6 / calc(var(--v) * .42)) 15%,rgb(2 4 6 / calc(var(--v) * .92)) 37%,rgb(2 4 6 / calc(var(--v) * .98)) 50%,rgb(2 4 6 / calc(var(--v) * .92)) 63%,rgb(2 4 6 / calc(var(--v) * .42)) 85%,transparent 100%) !important;
   pointer-events: none;
 }
