@@ -1,0 +1,6 @@
+@media (min-width: 851px) {
+  .hero {
+    height: 88vh;
+    min-height: 620px;
+  }
+}
