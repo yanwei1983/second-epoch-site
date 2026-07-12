@@ -131,3 +131,46 @@
   .route-example { grid-template-columns: 1fr; }
   .route-example i { transform: rotate(90deg); margin: auto; }
 }
+
+/* Readdy-style handoff: the fixed visual transforms behind the document content. */
+.main-page { z-index: 20; }
+.transition-page { z-index: 1 !important; background: transparent !important; }
+.transition-page .transition-overlay {
+  z-index: 6;
+  opacity: clamp(0, calc(var(--v) * 1.45), 1) !important;
+  transform: translateX(calc((.5 - var(--p)) * 34vw)) translateY(calc((.5 - var(--p)) * 18vh)) scale(calc(.82 + var(--p) * 1.38)) !important;
+  background: radial-gradient(circle at center,rgb(2 4 6 / calc(var(--v) * .96)) 0%,rgb(2 4 6 / calc(var(--v) * .78)) 54%,transparent 88%) !important;
+}
+.transition-page.dust-page .transition-overlay { background: transparent !important; }
+@media(max-width:900px) {
+  .transition-page .transition-overlay { transform: translateY(calc((.5 - var(--p)) * 24vh)) scale(calc(.88 + var(--p) * .72)) !important; }
+}
+
+/* Only the visual canvas zooms; transition copy keeps a stable reading size. */
+.transition-page .transition-overlay {
+  isolation: isolate;
+  transform: translateY(calc((.5 - var(--p)) * 160vh)) !important;
+  background: linear-gradient(180deg,rgba(2,4,6,.72),rgba(2,4,6,.94),rgba(2,4,6,.72)) !important;
+}
+.transition-page .transition-overlay:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -12%;
+  opacity: calc(var(--v) * .34);
+  transform: translateX(calc((.5 - var(--p)) * 26vw)) scale(calc(.82 + var(--p) * 1.38));
+  background-position: center;
+  background-size: cover;
+  filter: saturate(.72) contrast(1.08);
+}
+.manifesto-page .transition-overlay:before { background-image: url('/journey.png'); }
+.quote-page .transition-overlay:before { background-image: url('/scene-deep.png'); }
+.ship-page .transition-overlay:before { background-image: radial-gradient(circle at 30% 50%,rgba(76,113,125,.28),transparent 45%); }
+.loop-page .transition-overlay:before { background-image: url('/scene-industry.png'); }
+.gate-page .transition-overlay:before { background-image: url('/scene-gate.png'); }
+.dust-page .transition-overlay { background: transparent !important; }
+.dust-page .transition-overlay:before { display: none; }
+@media(max-width:900px) {
+  .transition-page .transition-overlay { transform: translateY(calc((.5 - var(--p)) * 140vh)) !important; }
+  .transition-page .transition-overlay:before { transform: translateX(calc((.5 - var(--p)) * 18vw)) scale(calc(.9 + var(--p) * .8)); }
+}
