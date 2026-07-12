@@ -246,3 +246,16 @@
   .report-stack b,.dispatch-stack b { font-size: 10px; }
   .route-example span,.route-example b { font-size: 10px; }
 }
+
+/* Keep scroll alpha on transition content without tinting the shared page canvas. */
+.transition-page .transition-overlay,
+.transition-page.dust-page .transition-overlay,
+.transition-page.ship-page .transition-overlay,
+.transition-page.loop-page .transition-overlay,
+.transition-page.gate-page .transition-overlay {
+  background: transparent !important;
+}
+.transition-page[data-visible="false"] .transition-overlay {
+  visibility: hidden;
+  opacity: 0 !important;
+}
