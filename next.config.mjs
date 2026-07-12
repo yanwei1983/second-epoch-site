@@ -1,2 +1,2 @@
-const nextConfig = { output: 'export', distDir: 'dist' };
+const nextConfig = { output: 'export' };
 export default nextConfig;
