@@ -12,9 +12,14 @@ const factions = [
 ];
 
 const gallery = [
-  ...factions.map(f=>({src:`/factions/${f.id}.png`,title:f.name,meta:f.role})),
-  {src:'/factions/blackstar.png',title:'黑星海盗团',meta:'袭击 / 走私 / 黑市'},
-  {src:'/factions/zealot.png',title:'光明狂热者',meta:'极端信仰 / 恐怖活动'}
+  {src:'/gallery/station.png',title:'边境空间站',meta:'世界设施 / 轨道节点'},
+  {src:'/gallery/universe.png',title:'新纪元宇宙',meta:'星域总览 / 世界概念'},
+  {src:'/gallery/matrix.png',title:'矩阵级炮艇',meta:'机械智团 / 战术舰艇'},
+  {src:'/gallery/calculus.png',title:'演算级炮艇',meta:'机械智团 / 火力平台'},
+  {src:'/gallery/zero.png',title:'零度级护卫舰',meta:'机械智团 / 完整涂装'},
+  {src:'/gallery/overmind.png',title:'超脑级护卫舰',meta:'机械智团 / 指挥节点'},
+  {src:'/gallery/swarm.png',title:'巢群护卫者',meta:'爬虫集群 / 生物舰艇'},
+  {src:'/gallery/ant.png',title:'星蚁级护卫舰',meta:'爬虫集群 / 群体单位'}
 ];
 
 const nav = [
