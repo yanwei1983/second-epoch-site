@@ -1,0 +1,3 @@
+@media (min-width: 851px) {
+  .stage-copy { width: min(650px, 52vw); }
+}

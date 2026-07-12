@@ -2,94 +2,35 @@
 
 import { useEffect, useState } from 'react';
 
-const factions = [
-  { id:'tianque', no:'01', name:'天阙联合体', motto:'秩序，是人类最后的护盾', desc:'由旧地球轨道城邦重组的技术官僚联盟。他们控制稳定跃迁航路，以精密的磁轨武器和坚固的阵列舰队维持核心星域秩序。', color:'#e4f4ff', stats:['磁轨火力','阵列防御','跃迁管制'] },
-  { id:'chiyan', no:'02', name:'赤焰公约', motto:'自由不需要许可', desc:'矿业殖民地与流亡船团组成的松散同盟。改装、超载与近距离突袭是他们的生存哲学，任何舰体都能成为一件危险武器。', color:'#f4a261', stats:['高速突击','舰体改装','资源掠夺'] },
-  { id:'huiguang', no:'03', name:'回光圣庭', motto:'倾听群星留下的回声', desc:'围绕先驱遗迹建立的神秘共同体。他们将意识映射技术视为神谕，擅长无人机集群、信号干扰与远程战场塑形。', color:'#8bd3c7', stats:['无人集群','电子战','遗迹科技'] }
+const stages = [
+  {id:'orbit',code:'ORBIT 01',label:'轨道外层',title:'一个真实存在的宇宙',copy:'十二个文明在同一片星海中生存。空间站按真实周期生产，运输船沿玩家建立的航线往返，而边境每天都在改变。',data:['12,400 恒星系','42,817 舰长在线','UTC 05:42']},
+  {id:'cruise',code:'CRUISE 02',label:'航行区',title:'离开航道，寻找自己的坐标',copy:'扫描未知星系、标记异常信号、穿越断层风暴。每次远航都会留下可交易的情报，也可能开启一条从未存在过的航线。',data:['跃迁航程 32.6 AU','信号强度 78%','前方航路稳定']},
+  {id:'industry',code:'INDUSTRY 03',label:'工业区',title:'世界不会等待玩家上线',copy:'矿区持续开采，订单不断成交，工厂按照你的蓝图制造舰体。每一艘战舰背后，都是玩家经营的资源、物流和工业网络。',data:['钛合金 +4.8%','船坞队列 08:16','运输节点 137']},
+  {id:'conflict',code:'CONFLICT 04',label:'交战区',title:'战争改变的不是比分，而是疆域',copy:'侦察、拦截、补给和舰队指挥共同决定战局。一次跃迁错误会失去整支舰队，一场胜利可能重画数十个星系的边界。',data:['舰队接触 6.4 AU','火控链路 ONLINE','交战权限开放']},
+  {id:'deep',code:'DEEP SPACE 05',label:'深空区',title:'宇宙仍在生成未知',copy:'异常空间没有固定答案。失落信标、先驱遗迹和不断变化的引力场组成持续演化的探索网络，等待第一个抵达的人。',data:['未知信号 03','空间曲率 1.82','数据库无匹配']},
+  {id:'gate',code:'GATE 06',label:'星门',title:'现在，选择你的第一艘船',copy:'成为探索者、工业家、舰队指挥官，或让所有航线避开你的名字。这个宇宙已经开始运转，你只需要进入其中。',data:['身份同步完成','舰船许可可用','跃迁窗口已开启']}
 ];
 
-const ships = [
-  {class:'巡航舰',name:'归墟级',role:'远征 / 火力支援',mass:'18,400 t',crew:'312',range:'32.6 AU',copy:'为穿越断层风暴而生。三组折叠式磁轨炮列与自愈装甲，使归墟级能够在没有补给的深空持续作战。'},
-  {class:'截击舰',name:'烬羽级',role:'追猎 / 跃迁拦截',mass:'1,280 t',crew:'24',range:'12.4 AU',copy:'以反应堆安全裕度换取惊人的加速度。烬羽级会在目标完成跃迁前撕开空间，锁死整支舰队的退路。'},
-  {class:'母舰',name:'观星者级',role:'指挥 / 无人机平台',mass:'1.2 Mt',crew:'4,800',range:'87.0 AU',copy:'一座可移动的星港，也是联盟意志的投影。它能同步指挥数百架无人战斗单元并重构局部通讯网络。'}
-];
-
-function IconButton({icon,label,onClick}) { return <button className="icon-btn" aria-label={label} title={label} onClick={onClick}><i className={`fa-solid ${icon}`}/></button> }
-
-export default function Home() {
-  const [faction,setFaction]=useState(0); const [ship,setShip]=useState(0); const [menu,setMenu]=useState(false); const [activeScene,setActiveScene]=useState(0);
+export default function Home(){
+  const [active,setActive]=useState(0); const [menu,setMenu]=useState(false);
   useEffect(()=>{
-    const root=document.documentElement;
-    const sections=[...document.querySelectorAll('.band')];
-    const sceneEls=[document.querySelector('.hero'),...sections];
-    const sceneObserver=new IntersectionObserver(entries=>{const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(visible)setActiveScene(sceneEls.indexOf(visible.target))},{threshold:[.25,.5,.75]});
-    sceneEls.forEach(scene=>sceneObserver.observe(scene));
-    const clamp=n=>Math.max(0,Math.min(1,n));
-    let timer=0;
-    const update=()=>{
-      const vh=innerHeight,max=document.documentElement.scrollHeight-vh;
-      root.style.setProperty('--scroll',max>0?scrollY/max:0);
-      root.style.setProperty('--drift',`${Math.min(scrollY*.16,140)}px`);
-      const hero=document.querySelector('.hero');
-      root.style.setProperty('--hero-p',clamp(scrollY/(hero?.offsetHeight||vh)));
-      sections.forEach(section=>{
-        const rect=section.getBoundingClientRect();
-        const enter=clamp((vh-rect.top)/(vh*.58));
-        const leave=clamp(rect.bottom/(vh*.52));
-        const visibility=Math.min(enter,leave);
-        const journey=clamp((vh-rect.top)/(vh+rect.height));
-        const direction=enter<1?1:leave<1?-1:0;
-        section.style.setProperty('--scene-v',visibility.toFixed(4));
-        section.style.setProperty('--scene-p',journey.toFixed(4));
-        section.style.setProperty('--scene-y',`${direction*(1-visibility)*68}px`);
-        section.style.setProperty('--scene-scale',(0.94+visibility*.06).toFixed(4));
-        section.style.opacity=visibility.toFixed(4);
-        const title=section.querySelector(':scope > .section-head, :scope > .section-label, .career-copy');
-        const depth=section.querySelector('.map-wrap, .sigil, .ship-visual, .career-grid');
-        const counter=section.querySelector('.world-stats, .faction-panel, .ship-copy');
-        if(title)title.style.transform=`translate3d(0,${(journey-.5)*-92}px,0)`;
-        if(depth)depth.style.transform=`translate3d(0,${(journey-.5)*-138}px,0) scale(${.96+visibility*.04})`;
-        if(counter)counter.style.transform=`translate3d(0,${(journey-.5)*-54}px,0)`;
-      });
-      let closest=0,distance=Infinity;
-      sceneEls.forEach((scene,index)=>{const rect=scene.getBoundingClientRect(),d=Math.abs(rect.top+rect.height/2-vh/2);if(d<distance){distance=d;closest=index}});
-      setActiveScene(current=>current===closest?current:closest);
-    };
-    const onMove=e=>{root.style.setProperty('--mx',`${(e.clientX/innerWidth-.5)*18}px`);root.style.setProperty('--my',`${(e.clientY/innerHeight-.5)*12}px`)};
-    update();root.classList.add('motion-ready');timer=setInterval(update,50);addEventListener('pointermove',onMove,{passive:true});
-    return()=>{root.classList.remove('motion-ready');sceneObserver.disconnect();removeEventListener('pointermove',onMove);clearInterval(timer)};
+    const root=document.documentElement,els=[...document.querySelectorAll('.route-stage')];
+    let raf=0;
+    const update=()=>{const max=document.documentElement.scrollHeight-innerHeight,route=max?scrollY/max:0;root.style.setProperty('--route',route.toFixed(4));let best=0,dist=Infinity;els.forEach((el,i)=>{const r=el.getBoundingClientRect(),p=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight+r.height))),v=Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.78));el.style.setProperty('--stage-p',p.toFixed(4));el.style.setProperty('--stage-v',v.toFixed(4));const d=Math.abs(r.top+r.height/2-innerHeight/2);if(d<dist){dist=d;best=i}});setActive(x=>x===best?x:best);raf=0};
+    const onScroll=()=>{if(!raf)raf=requestAnimationFrame(update)};update();addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll,{passive:true});return()=>{removeEventListener('scroll',onScroll);removeEventListener('resize',onScroll);cancelAnimationFrame(raf)};
   },[]);
-  return <main>
-    <div className="scroll-progress" aria-hidden="true"/><div className="grain" aria-hidden="true"/>
-    <aside className="scene-rail" aria-label="章节导航">{[['top','序章'],['world','星域'],['factions','势力'],['ships','舰船'],['careers','生涯']].map((item,i)=><a className={activeScene===i?'active':''} href={`#${item[0]}`} aria-label={item[1]} title={item[1]} key={item[0]}><span>{String(i+1).padStart(2,'0')}</span></a>)}</aside>
-    <header className="topbar">
-      <a className="brand" href="#top" aria-label="断层纪元首页"><span className="brand-mark">F</span><span>断层纪元<small>FRACTURE ERA</small></span></a>
-      <nav className={menu?'open':''}><a href="#world">宇宙</a><a href="#factions">势力</a><a href="#ships">舰船</a><a href="#careers">生涯</a></nav>
-      <div className="actions"><a className="login" href="#careers">舰长登录</a><a className="primary" href="#careers">开始征途 <i className="fa-solid fa-arrow-right"/></a><IconButton icon="fa-bars" label="导航菜单" onClick={()=>setMenu(!menu)}/></div>
-    </header>
-
-    <section id="top" className="hero"><div className="hero-stars" aria-hidden="true">{Array.from({length:18},(_,i)=><i key={i}/>)}</div><div className="hero-scan" aria-hidden="true"/>
-      <div className="hero-copy"><p className="eyebrow">大型多人在线星海沙盒</p><h1>你不是英雄。<br/><em>你是变量。</em></h1><p className="lead">每一艘舰船、每一次交易、每一场战争，都由真实玩家推动。在 12,400 个恒星系中，建立你的秩序。</p><div className="hero-cta"><a className="primary large" href="#world">探索宇宙 <i className="fa-solid fa-chevron-down"/></a><button className="watch"><i className="fa-solid fa-play"/> 观看世界预告</button></div></div>
-      <div className="hero-status"><span className="pulse"/> 服务器在线 <b>42,817</b> 名舰长</div>
-      <div className="scroll-note">SCROLL TO DISCOVER <span/></div>
-    </section>
-
-    <section id="world" className="world band">
-      <div className="section-head"><div><p className="eyebrow">THE KNOWN EXPANSE / 已知疆域</p><h2>破碎之后，<br/>群星成为疆场</h2></div><p>公元 2479 年，“断层”撕裂了人类的跃迁网络。孤立百年的殖民地重新相遇，却早已发展出截然不同的文明。贸易、信仰和领土，让每一条航线都充满代价。</p></div>
-      <div className="map-wrap"><div className="orbit o1"/><div className="orbit o2"/><div className="map-core"><b>断层核心</b><small>UNMAPPED</small></div>{[['天阙核心区','26.4 / 91.7','n1'],['赤焰边境','63.2 / 48.1','n2'],['回光圣域','78.8 / 20.4','n3'],['自由港群','41.9 / 66.0','n4']].map(n=><button className={`node ${n[2]}`} key={n[0]} title={n[0]}><span/><b>{n[0]}</b><small>{n[1]}</small></button>)}</div>
-      <div className="world-stats"><div><strong>12,400</strong><span>可探索恒星系</span></div><div><strong>1</strong><span>持续演化的世界</span></div><div><strong>24 / 7</strong><span>永不停服的战争</span></div></div>
-    </section>
-
-    <section id="factions" className="factions band">
-      <div className="section-label">03 / 势力档案</div><div className="faction-layout"><aside>{factions.map((f,i)=><button className={faction===i?'active':''} onClick={()=>setFaction(i)} key={f.id}><span>{f.no}</span>{f.name}</button>)}</aside><article key={factions[faction].id} className="faction-panel" style={{'--accent':factions[faction].color}}><p className="eyebrow">FACTION DOSSIER</p><h2>{factions[faction].name}</h2><blockquote>“{factions[faction].motto}”</blockquote><p>{factions[faction].desc}</p><div className="tags">{factions[faction].stats.map(s=><span key={s}>{s}</span>)}</div><a href="#ships">查看舰队编制 <i className="fa-solid fa-arrow-right"/></a></article><div key={`${factions[faction].id}-sigil`} className="sigil"><span>{factions[faction].no}</span><i className="fa-solid fa-satellite"/></div></div>
-    </section>
-
-    <section id="ships" className="ships band">
-      <div className="section-head"><div><p className="eyebrow">VESSEL ARCHIVE / 舰船档案</p><h2>每一艘船，<br/>都是你的答案</h2></div><div className="ship-nav"><IconButton icon="fa-arrow-left" label="上一艘" onClick={()=>setShip((ship+ships.length-1)%ships.length)}/><span>{String(ship+1).padStart(2,'0')} / 03</span><IconButton icon="fa-arrow-right" label="下一艘" onClick={()=>setShip((ship+1)%ships.length)}/></div></div>
-      <div className="ship-stage"><div key={`${ship}-visual`} className="ship-visual"><div className="scanner"/><div className="scan-line"/><div className="ship-shape"><span/><span/><span/></div><b>HULL // {ships[ship].name}</b></div><article key={`${ship}-copy`} className="ship-copy"><p className="eyebrow">{ships[ship].class}</p><h3>{ships[ship].name}</h3><p>{ships[ship].copy}</p><dl><div><dt>战术定位</dt><dd>{ships[ship].role}</dd></div><div><dt>标准质量</dt><dd>{ships[ship].mass}</dd></div><div><dt>标准编制</dt><dd>{ships[ship].crew}</dd></div><div><dt>跃迁航程</dt><dd>{ships[ship].range}</dd></div></dl><a className="text-link" href="#careers">完整舰船数据库 <i className="fa-solid fa-arrow-right"/></a></article></div>
-    </section>
-
-    <section id="careers" className="careers band"><div className="career-copy"><p className="eyebrow">CHOOSE YOUR VECTOR / 定义方向</p><h2>没有预设的命运</h2><p>成为舰队指挥官、星际商人、遗迹猎手，或让整个星域记住你的海盗信号。技能没有职业限制，世界不会替你做选择。</p><a className="primary large" href="#top">创建舰长 <i className="fa-solid fa-arrow-right"/></a></div><div className="career-grid">{[['fa-crosshairs','猎手','追踪悬赏，截断航路'],['fa-chart-line','商人','操纵市场，建立物流帝国'],['fa-compass','探索者','穿越断层，唤醒先驱遗迹'],['fa-people-group','统帅','集结军团，改写星域版图']].map(x=><div key={x[1]}><i className={`fa-solid ${x[0]}`}/><b>{x[1]}</b><span>{x[2]}</span></div>)}</div></section>
-    <footer><div className="brand"><span className="brand-mark">F</span><span>断层纪元<small>FRACTURE ERA</small></span></div><p>这是一个原创科幻 MMO 世界观概念站。所有文明、舰船与设定均为虚构。</p><div><a href="#">世界观</a><a href="#">支持中心</a><a href="#">社群</a></div><small>© 2026 FRACTURE ERA</small></footer>
+  const stage=stages[active];
+  return <main className="journey">
+    <div className="flight-bg" aria-hidden="true"><div className="space-dust"/><div className="nav-lane l1"/><div className="nav-lane l2"/><div className="fleet-mark m1"/><div className="fleet-mark m2"/><div className="gate-flare"/></div>
+    <div className="hud-frame" aria-hidden="true"><span className="corner tl"/><span className="corner tr"/><span className="corner bl"/><span className="corner br"/></div>
+    <div className="route-progress" aria-hidden="true"><span style={{height:`${(active/(stages.length-1))*100}%`}}/></div>
+    <header className="journey-nav"><a className="brand" href="#orbit"><span className="brand-mark">F</span><span>断层纪元<small>FRACTURE ERA</small></span></a><nav className={menu?'open':''}>{stages.map((s,i)=><a className={active===i?'active':''} href={`#${s.id}`} key={s.id}>{s.label}</a>)}</nav><div className="nav-status"><span className="pulse"/> 世界在线 <b>42,817</b></div><button className="icon-btn menu-toggle" onClick={()=>setMenu(!menu)} aria-label="导航菜单" title="导航菜单"><i className="fa-solid fa-bars"/></button></header>
+    <aside className="flight-hud" aria-live="polite"><span>FLIGHT VECTOR</span><b>{stage.code}</b><small>{String(active+1).padStart(2,'0')} / 06</small></aside>
+    <aside className="telemetry" aria-hidden="true"><span>VEL</span><b>{Math.round(2840+active*617)} m/s</b><span>RANGE</span><b>{(18.4-active*2.1).toFixed(1)} AU</b><span>SYNC</span><b>98.7%</b></aside>
+    {stages.map((s,i)=><section id={s.id} className={`route-stage stage-${i}`} key={s.id}>
+      <div className="stage-copy"><p className="stage-code">{s.code} / {s.label}</p><h1>{i===0?<>在文明边界之外，<br/>建立你的第二纪元。</>:s.title}</h1>{i===0?<p className="intro">探索、贸易、战争，以及由玩家共同塑造的星际世界。</p>:<p>{s.copy}</p>}<div className="stage-data">{s.data.map(d=><span key={d}>{d}</span>)}</div>{i===0&&<a className="hud-action" href="#cruise">启动航行 <i className="fa-solid fa-arrow-down"/></a>}{i===stages.length-1&&<div className="gate-actions"><a className="hud-action solid" href="#orbit">创建舰长 <i className="fa-solid fa-arrow-right"/></a><button>查看舰船档案</button></div>}</div>
+      <div className={`stage-instrument instrument-${i}`} aria-hidden="true"><i/><i/><i/><span>{s.label}</span></div>
+    </section>)}
+    <footer className="journey-footer"><span>© 2026 FRACTURE ERA</span><span>原创科幻 MMO 世界观概念</span><a href="#orbit">返回轨道</a></footer>
   </main>
 }
