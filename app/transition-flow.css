@@ -42,7 +42,7 @@
 .quote-page .transition-overlay>div { transform: scale(calc(.92 + var(--v) * .08)); }
 .quote-page .transition-overlay blockquote { margin: 24px; }
 .quote-rotation { position: relative; height: min(58vh,560px); }
-.quote-rotation article { position: absolute; inset: 0; display: grid; place-content: center; opacity: clamp(0,calc(1 - abs(var(--p) - var(--q)) * 7),1); transform: translateY(calc((var(--p) - var(--q)) * -90px)); }
+.quote-rotation article { position: absolute; inset: 0; display: grid; place-content: center; opacity: var(--quote-opacity,0); transform: translateY(var(--quote-y,0)); transition: opacity 90ms linear; }
 .quote-rotation article blockquote { min-width: min(1050px,82vw); }
 .lore-lead { max-width: 680px; color: #aab7bb; font-size: 14px; line-height: 1.9; }
 .join-now { cursor: pointer; background: rgba(3,7,9,.46); }
@@ -258,4 +258,8 @@
 .transition-page[data-visible="false"] .transition-overlay {
   visibility: hidden;
   opacity: 0 !important;
+}
+.transition-page.quote-page {
+  min-height: 90vh !important;
+  height: 90vh;
 }

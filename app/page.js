@@ -56,6 +56,14 @@ export default function Home(){
         const visible=el.dataset.main?Math.min(enter,exit):Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.9));
         el.style.setProperty('--p',progress.toFixed(4));
         el.style.setProperty('--v',visible.toFixed(4));
+        if(el.classList.contains('quote-page')){
+          const centers=[.28,.5,.72];
+          el.querySelectorAll('.quote-rotation article').forEach((quote,index)=>{
+            const delta=progress-centers[index];
+            quote.style.setProperty('--quote-opacity',Math.max(0,1-Math.abs(delta)*10).toFixed(4));
+            quote.style.setProperty('--quote-y',`${(delta*-150).toFixed(2)}px`);
+          });
+        }
         if(!el.dataset.main){
           const slotTop=scrollY+r.top;
           const zoomRaw=Math.max(0,Math.min(1,(scrollY-(slotTop-innerHeight*.6))/innerHeight));
