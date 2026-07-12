@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const factions = [
   { id:'tianque', no:'01', name:'天阙联合体', motto:'秩序，是人类最后的护盾', desc:'由旧地球轨道城邦重组的技术官僚联盟。他们控制稳定跃迁航路，以精密的磁轨武器和坚固的阵列舰队维持核心星域秩序。', color:'#e4f4ff', stats:['磁轨火力','阵列防御','跃迁管制'] },
@@ -18,14 +18,26 @@ function IconButton({icon,label,onClick}) { return <button className="icon-btn" 
 
 export default function Home() {
   const [faction,setFaction]=useState(0); const [ship,setShip]=useState(0); const [menu,setMenu]=useState(false);
+  useEffect(()=>{
+    const root=document.documentElement;
+    const reveal=new IntersectionObserver(entries=>entries.forEach(entry=>entry.isIntersecting&&entry.target.classList.add('is-visible')),{threshold:.14});
+    document.querySelectorAll('.band, .section-head, .ship-stage, .career-grid').forEach(el=>reveal.observe(el));
+    let raf=0;
+    const update=()=>{const max=document.documentElement.scrollHeight-innerHeight;root.style.setProperty('--scroll',max>0?scrollY/max:0);root.style.setProperty('--drift',`${Math.min(scrollY*.16,140)}px`);raf=0};
+    const onScroll=()=>{if(!raf)raf=requestAnimationFrame(update)};
+    const onMove=e=>{root.style.setProperty('--mx',`${(e.clientX/innerWidth-.5)*18}px`);root.style.setProperty('--my',`${(e.clientY/innerHeight-.5)*12}px`)};
+    update();addEventListener('scroll',onScroll,{passive:true});addEventListener('pointermove',onMove,{passive:true});
+    return()=>{reveal.disconnect();removeEventListener('scroll',onScroll);removeEventListener('pointermove',onMove);cancelAnimationFrame(raf)};
+  },[]);
   return <main>
+    <div className="scroll-progress" aria-hidden="true"/><div className="grain" aria-hidden="true"/>
     <header className="topbar">
       <a className="brand" href="#top" aria-label="断层纪元首页"><span className="brand-mark">F</span><span>断层纪元<small>FRACTURE ERA</small></span></a>
       <nav className={menu?'open':''}><a href="#world">宇宙</a><a href="#factions">势力</a><a href="#ships">舰船</a><a href="#careers">生涯</a></nav>
       <div className="actions"><a className="login" href="#careers">舰长登录</a><a className="primary" href="#careers">开始征途 <i className="fa-solid fa-arrow-right"/></a><IconButton icon="fa-bars" label="导航菜单" onClick={()=>setMenu(!menu)}/></div>
     </header>
 
-    <section id="top" className="hero">
+    <section id="top" className="hero"><div className="hero-stars" aria-hidden="true">{Array.from({length:18},(_,i)=><i key={i}/>)}</div><div className="hero-scan" aria-hidden="true"/>
       <div className="hero-copy"><p className="eyebrow">大型多人在线星海沙盒</p><h1>你不是英雄。<br/><em>你是变量。</em></h1><p className="lead">每一艘舰船、每一次交易、每一场战争，都由真实玩家推动。在 12,400 个恒星系中，建立你的秩序。</p><div className="hero-cta"><a className="primary large" href="#world">探索宇宙 <i className="fa-solid fa-chevron-down"/></a><button className="watch"><i className="fa-solid fa-play"/> 观看世界预告</button></div></div>
       <div className="hero-status"><span className="pulse"/> 服务器在线 <b>42,817</b> 名舰长</div>
       <div className="scroll-note">SCROLL TO DISCOVER <span/></div>
@@ -38,12 +50,12 @@ export default function Home() {
     </section>
 
     <section id="factions" className="factions band">
-      <div className="section-label">03 / 势力档案</div><div className="faction-layout"><aside>{factions.map((f,i)=><button className={faction===i?'active':''} onClick={()=>setFaction(i)} key={f.id}><span>{f.no}</span>{f.name}</button>)}</aside><article style={{'--accent':factions[faction].color}}><p className="eyebrow">FACTION DOSSIER</p><h2>{factions[faction].name}</h2><blockquote>“{factions[faction].motto}”</blockquote><p>{factions[faction].desc}</p><div className="tags">{factions[faction].stats.map(s=><span key={s}>{s}</span>)}</div><a href="#ships">查看舰队编制 <i className="fa-solid fa-arrow-right"/></a></article><div className="sigil"><span>{factions[faction].no}</span><i className="fa-solid fa-satellite"/></div></div>
+      <div className="section-label">03 / 势力档案</div><div className="faction-layout"><aside>{factions.map((f,i)=><button className={faction===i?'active':''} onClick={()=>setFaction(i)} key={f.id}><span>{f.no}</span>{f.name}</button>)}</aside><article key={factions[faction].id} className="faction-panel" style={{'--accent':factions[faction].color}}><p className="eyebrow">FACTION DOSSIER</p><h2>{factions[faction].name}</h2><blockquote>“{factions[faction].motto}”</blockquote><p>{factions[faction].desc}</p><div className="tags">{factions[faction].stats.map(s=><span key={s}>{s}</span>)}</div><a href="#ships">查看舰队编制 <i className="fa-solid fa-arrow-right"/></a></article><div key={`${factions[faction].id}-sigil`} className="sigil"><span>{factions[faction].no}</span><i className="fa-solid fa-satellite"/></div></div>
     </section>
 
     <section id="ships" className="ships band">
       <div className="section-head"><div><p className="eyebrow">VESSEL ARCHIVE / 舰船档案</p><h2>每一艘船，<br/>都是你的答案</h2></div><div className="ship-nav"><IconButton icon="fa-arrow-left" label="上一艘" onClick={()=>setShip((ship+ships.length-1)%ships.length)}/><span>{String(ship+1).padStart(2,'0')} / 03</span><IconButton icon="fa-arrow-right" label="下一艘" onClick={()=>setShip((ship+1)%ships.length)}/></div></div>
-      <div className="ship-stage"><div className="ship-visual"><div className="scanner"/><div className="ship-shape"><span/><span/><span/></div><b>HULL // {ships[ship].name}</b></div><article><p className="eyebrow">{ships[ship].class}</p><h3>{ships[ship].name}</h3><p>{ships[ship].copy}</p><dl><div><dt>战术定位</dt><dd>{ships[ship].role}</dd></div><div><dt>标准质量</dt><dd>{ships[ship].mass}</dd></div><div><dt>标准编制</dt><dd>{ships[ship].crew}</dd></div><div><dt>跃迁航程</dt><dd>{ships[ship].range}</dd></div></dl><a className="text-link" href="#careers">完整舰船数据库 <i className="fa-solid fa-arrow-right"/></a></article></div>
+      <div className="ship-stage"><div key={`${ship}-visual`} className="ship-visual"><div className="scanner"/><div className="scan-line"/><div className="ship-shape"><span/><span/><span/></div><b>HULL // {ships[ship].name}</b></div><article key={`${ship}-copy`} className="ship-copy"><p className="eyebrow">{ships[ship].class}</p><h3>{ships[ship].name}</h3><p>{ships[ship].copy}</p><dl><div><dt>战术定位</dt><dd>{ships[ship].role}</dd></div><div><dt>标准质量</dt><dd>{ships[ship].mass}</dd></div><div><dt>标准编制</dt><dd>{ships[ship].crew}</dd></div><div><dt>跃迁航程</dt><dd>{ships[ship].range}</dd></div></dl><a className="text-link" href="#careers">完整舰船数据库 <i className="fa-solid fa-arrow-right"/></a></article></div>
     </section>
 
     <section id="careers" className="careers band"><div className="career-copy"><p className="eyebrow">CHOOSE YOUR VECTOR / 定义方向</p><h2>没有预设的命运</h2><p>成为舰队指挥官、星际商人、遗迹猎手，或让整个星域记住你的海盗信号。技能没有职业限制，世界不会替你做选择。</p><a className="primary large" href="#top">创建舰长 <i className="fa-solid fa-arrow-right"/></a></div><div className="career-grid">{[['fa-crosshairs','猎手','追踪悬赏，截断航路'],['fa-chart-line','商人','操纵市场，建立物流帝国'],['fa-compass','探索者','穿越断层，唤醒先驱遗迹'],['fa-people-group','统帅','集结军团，改写星域版图']].map(x=><div key={x[1]}><i className={`fa-solid ${x[0]}`}/><b>{x[1]}</b><span>{x[2]}</span></div>)}</div></section>
