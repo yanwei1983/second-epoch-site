@@ -1,0 +1,8 @@
+@media (min-width: 851px) {
+  .journey-nav nav { display: none !important; }
+}
+
+@media (max-width: 850px) {
+  .journey-nav nav { display: none !important; }
+  .journey-nav nav.open { display: flex !important; }
+}
