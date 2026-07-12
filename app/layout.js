@@ -7,6 +7,7 @@ import './replica.css';
 import './replica-fixes.css';
 import './scenes.css';
 import './pages.css';
+import './dwell.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export const metadata = { title: '断层纪元 | 星海沙盒 MMO', description: '在破碎星域中定义你的秩序。' };
