@@ -157,8 +157,8 @@
   position: absolute;
   z-index: -1;
   inset: -12%;
-  opacity: calc(var(--v) * .34);
-  transform: translateX(calc((.5 - var(--p)) * 26vw)) scale(calc(.82 + var(--p) * 1.38));
+  opacity: calc(var(--visual-opacity, 0) * .34);
+  transform: translate(var(--visual-x,64px),var(--visual-y,-112px)) scale(var(--visual-scale,1.21));
   background-position: center;
   background-size: cover;
   filter: saturate(.72) contrast(1.08);
@@ -172,5 +172,5 @@
 .dust-page .transition-overlay:before { display: none; }
 @media(max-width:900px) {
   .transition-page .transition-overlay { transform: translateY(calc((.5 - var(--p)) * 140vh)) !important; }
-  .transition-page .transition-overlay:before { transform: translateX(calc((.5 - var(--p)) * 18vw)) scale(calc(.9 + var(--p) * .8)); }
+  .transition-page .transition-overlay:before { transform: translate(var(--visual-x,0px),var(--visual-y,0px)) scale(var(--visual-scale,1.15)); }
 }

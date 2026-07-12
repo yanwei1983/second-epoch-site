@@ -49,7 +49,20 @@ export default function Home(){
         const visible=el.dataset.main?Math.min(enter,exit):Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.9));
         el.style.setProperty('--p',progress.toFixed(4));
         el.style.setProperty('--v',visible.toFixed(4));
-        if(!el.dataset.main)el.dataset.visible=visible>.05?'true':'false';
+        if(!el.dataset.main){
+          const slotTop=scrollY+r.top;
+          const zoomRaw=Math.max(0,Math.min(1,(scrollY-(slotTop-innerHeight*.6))/innerHeight));
+          const zoom=zoomRaw*zoomRaw*(3-2*zoomRaw);
+          const fade=Math.max(0,Math.min(1,1-(scrollY-(slotTop+r.height))/(innerHeight*.6)));
+          const mobile=innerWidth<1024;
+          const baseX=mobile?0:64,baseY=mobile?0:-112,baseScale=mobile?1.15:1.21;
+          const targetX=mobile?0:-innerWidth/4,targetY=mobile?-innerHeight/4:0;
+          el.style.setProperty('--visual-scale',(baseScale+(3-baseScale)*zoom).toFixed(4));
+          el.style.setProperty('--visual-x',`${(baseX+(targetX-baseX)*zoom).toFixed(2)}px`);
+          el.style.setProperty('--visual-y',`${(baseY+(targetY-baseY)*zoom).toFixed(2)}px`);
+          el.style.setProperty('--visual-opacity',fade.toFixed(4));
+          el.dataset.visible=visible>.05?'true':'false';
+        }
         if(el.dataset.main){const d=Math.abs(r.top+r.height/2-innerHeight/2);if(d<distance){distance=d;best=el.id}}
       });
       root.style.setProperty('--route',(scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)).toFixed(4));
