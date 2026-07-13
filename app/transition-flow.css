@@ -335,15 +335,20 @@
 .transition-page.quote-page {
   position: relative !important;
   z-index: 30 !important;
-  height: 66vh !important;
-  min-height: 66vh !important;
+  height: 0 !important;
+  min-height: 0 !important;
   overflow: visible !important;
   background: transparent !important;
   pointer-events: none !important;
 }
 .transition-page.quote-page {
-  height: 92vh !important;
-  min-height: 92vh !important;
+  height: 0 !important;
+  min-height: 0 !important;
+}
+.transition-page.ship-page,
+.transition-page.loop-page {
+  height: 0 !important;
+  min-height: 0 !important;
 }
 .transition-page .transition-overlay,
 .transition-page.dust-page .transition-overlay,
@@ -359,8 +364,8 @@
   min-height: 680px !important;
   padding: 9vh 8vw !important;
   visibility: visible !important;
-  opacity: 1 !important;
-  transform: translate3d(0,-50%,0) !important;
+  opacity: clamp(0,calc(var(--v) * 1.55),1) !important;
+  transform: translate3d(0,calc(-50% + (.5 - var(--p)) * 30vh),0) !important;
   background: linear-gradient(180deg,
     rgba(2,4,6,0) 0%,
     rgba(2,4,6,.62) 13%,
@@ -386,12 +391,17 @@
 @media(max-width:900px) {
   .transition-page,
   .transition-page.quote-page {
-    height: 72svh !important;
-    min-height: 72svh !important;
+    height: 0 !important;
+    min-height: 0 !important;
   }
   .transition-page.quote-page {
-    height: 94svh !important;
-    min-height: 94svh !important;
+    height: 0 !important;
+    min-height: 0 !important;
+  }
+  .transition-page.ship-page,
+  .transition-page.loop-page {
+    height: 0 !important;
+    min-height: 0 !important;
   }
   .transition-page .transition-overlay,
   .transition-page.dust-page .transition-overlay,
@@ -401,6 +411,7 @@
     height: 108svh !important;
     min-height: 620px !important;
     padding: 9svh 22px 7svh !important;
+    transform: translate3d(0,calc(-50% + (.5 - var(--p)) * 26svh),0) !important;
   }
 }
 
@@ -416,11 +427,13 @@
   --thruster-canvas-h: min(38.27vw,675.4px);
   --thruster-left-offset: min(53.04vw,936px);
   --thruster-top-offset: min(41.33vw,729.4px);
+  --thruster-anchor-y: calc(108% - var(--thruster-top-offset));
+  --thruster-arrival-y: 28vh;
   position: absolute;
   z-index: 1;
   inset: auto;
   left: calc(78% - var(--thruster-left-offset));
-  top: calc(108% - var(--thruster-top-offset));
+  top: var(--thruster-anchor-y);
   width: var(--thruster-canvas-w);
   height: var(--thruster-canvas-h);
   pointer-events: none;
@@ -432,8 +445,15 @@
   mix-blend-mode: screen;
   transform: translate3d(0,calc((var(--p) - .5) * -18vh),0);
   transform-origin: bottom right;
-  animation: heroThrusterPulse 1.65s ease-in-out 1.2s infinite both;
-  will-change: opacity,filter,transform;
+  animation:
+    heroThrusterArrival 5.2s cubic-bezier(.16,1,.3,1) both,
+    heroThrusterPulse 1.65s ease-in-out 1.2s infinite both;
+  will-change: top,opacity,filter,transform;
+}
+
+@keyframes heroThrusterArrival {
+  from { top: calc(var(--thruster-anchor-y) + var(--thruster-arrival-y)); }
+  to { top: var(--thruster-anchor-y); }
 }
 
 @keyframes heroThrusterPulse {
@@ -448,8 +468,9 @@
     --thruster-canvas-h: 59.1vw;
     --thruster-left-offset: 73.5vw;
     --thruster-top-offset: 61.47vw;
+    --thruster-anchor-y: calc(104% - var(--thruster-top-offset));
+    --thruster-arrival-y: 20svh;
     left: calc(70% - var(--thruster-left-offset));
-    top: calc(104% - var(--thruster-top-offset));
     transform: translate3d(0,calc((var(--p) - .5) * -12vh),0);
   }
 }
@@ -464,8 +485,8 @@
 
 /* The final gate remains a traveling overlay, not a standalone chapter. */
 .transition-page.gate-page {
-  height: 52vh !important;
-  min-height: 52vh !important;
+  height: 0 !important;
+  min-height: 0 !important;
 }
 .transition-page.gate-page .transition-overlay {
   height: 96vh !important;
@@ -481,8 +502,8 @@
 }
 @media(max-width:900px) {
   .transition-page.gate-page {
-    height: 58svh !important;
-    min-height: 58svh !important;
+    height: 0 !important;
+    min-height: 0 !important;
   }
   .transition-page.gate-page .transition-overlay {
     height: 94svh !important;
