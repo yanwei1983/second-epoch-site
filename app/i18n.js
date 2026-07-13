@@ -56,7 +56,6 @@ const EN = {
   '加入星际社区':'JOIN THE INTERSTELLAR COMMUNITY', '与全球指挥官一起，开启你的银河征程':'Begin your galactic journey alongside commanders from around the world',
   '将《第二纪元》加入愿望单，获取最新游戏资讯':'Wishlist Second Epoch and receive the latest game updates', '加入愿望单':'ADD TO WISHLIST',
   '加入官方 Discord，与开发者和舰长直接交流':'Join the official Discord and talk directly with developers and captains', '加入 Discord':'JOIN DISCORD',
-  '微博':'WEIBO', '关注官方微博，获取中文独家内容':'Follow our official Weibo for exclusive Chinese-language updates', '关注微博':'FOLLOW WEIBO',
   '游戏':'GAME', '关于游戏':'About', '派系介绍':'Factions', '玩法特色':'Features', '新闻资讯':'News', '官方论坛':'Official Forum', 'Steam 社区':'Steam Community', '玩家手册':'Player Guide',
   '支持':'SUPPORT', '帮助中心':'Help Center', '系统要求':'System Requirements', '联系我们':'Contact', '反馈问题':'Report an Issue', '法律':'LEGAL', '隐私政策':'Privacy Policy', '用户协议':'User Agreement', 'Cookie 政策':'Cookie Policy',
   '征服银河':'CONQUER THE GALAXY', '从此刻开始':'STARTING NOW', '© 2026 第二纪元. 保留所有权利。':'© 2026 Second Epoch. All rights reserved.',

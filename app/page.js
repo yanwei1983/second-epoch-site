@@ -142,7 +142,9 @@ export default function Home(){
     <section id="community" data-main data-scroll-page className="main-page community-page"><div className="page-sticky"><div className="community-title"><span className="eyebrow">JOIN THE FLEET</span><h2>加入星际社区</h2><p>与全球指挥官一起，开启你的银河征程</p><button className="primary-action join-now community-join" onClick={()=>{setJoined(false);setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div><div className="community-cards">{[
       ['fa-brands fa-steam','STEAM','将《第二纪元》加入愿望单，获取最新游戏资讯','加入愿望单'],
       ['fa-brands fa-discord','DISCORD','加入官方 Discord，与开发者和舰长直接交流','加入 Discord'],
-      ['fa-brands fa-weibo','微博','关注官方微博，获取中文独家内容','关注微博']
+      lang==='en'
+        ? ['fa-brands fa-x-twitter','X','Follow Second Epoch on X for development updates and community news','FOLLOW ON X']
+        : ['fa-solid fa-book-bookmark','小红书','关注官方小红书，获取中文独家内容与开发动态','关注小红书']
     ].map(([icon,title,copy,action])=><article key={title}><i className={icon}/><h3>{title}</h3><p>{copy}</p><a href="#home">{action} <i className="fa-solid fa-arrow-right"/></a></article>)}</div><SiteFooter lang={lang}/></div></section>
 
     {art!==null&&<div className="art-modal" role="dialog" aria-modal="true"><button className="modal-close" onClick={()=>setArt(null)} aria-label="关闭"><i className="fa-solid fa-xmark"/></button><button className="modal-prev" onClick={()=>setArt((art-1+gallery.length)%gallery.length)} aria-label="上一张"><i className="fa-solid fa-arrow-left"/></button><figure><img src={gallery[art].src} alt={gallery[art].title}/><figcaption><b>{gallery[art].title}</b><span>{gallery[art].meta}</span><small>{String(art+1).padStart(2,'0')} / {String(gallery.length).padStart(2,'0')}</small></figcaption></figure><button className="modal-next" onClick={()=>setArt((art+1)%gallery.length)} aria-label="下一张"><i className="fa-solid fa-arrow-right"/></button></div>}
