@@ -461,3 +461,100 @@
     filter: blur(8px);
   }
 }
+
+/* Compact language control in the global navigation. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.language-switch {
+  position: relative;
+  flex: 0 0 auto;
+  height: 38px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(203,216,219,.38);
+  color: #c9d5d8;
+  background: rgba(3,7,9,.46);
+}
+.language-switch>i:first-child {
+  margin-left: 11px;
+  font-size: 11px;
+  color: #88999e;
+}
+.language-switch>i:last-child {
+  position: absolute;
+  right: 9px;
+  font-size: 8px;
+  pointer-events: none;
+}
+.language-switch select {
+  width: 82px;
+  height: 100%;
+  padding: 0 22px 0 8px;
+  border: 0;
+  outline: 0;
+  appearance: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: 10px 'Noto Sans SC',sans-serif;
+}
+.language-switch select:focus-visible {
+  box-shadow: inset 0 0 0 1px #e4eef0;
+}
+.language-switch option {
+  background: #05090b;
+  color: #e4edef;
+}
+
+html[lang="en"] .hero-copy {
+  width: min(900px,70vw);
+}
+html[lang="en"] .hero-copy h1 {
+  max-width: none;
+  white-space: nowrap;
+  font-size: clamp(58px,8vw,124px);
+}
+html[lang="en"] .manifesto-page .transition-overlay h2 {
+  font-size: clamp(36px,4.5vw,66px);
+}
+html[lang="en"] .demo-copy h2,
+html[lang="en"] .lore-copy h2,
+html[lang="en"] .dynamic-copy h2,
+html[lang="en"] .gallery-title h2,
+html[lang="en"] .community-title h2,
+html[lang="en"] .gate-page h2 {
+  font-family: Oswald,'Noto Sans SC',sans-serif;
+  font-size: clamp(36px,4.5vw,66px);
+  line-height: 1.12;
+}
+html[lang="en"] .quote-rotation article blockquote {
+  font-family: 'Noto Serif SC',serif !important;
+  font-size: clamp(22px,2.6vw,42px) !important;
+}
+html[lang="en"] .faction-copy h2,
+html[lang="en"] .ship-copy h2 {
+  font-family: Oswald,'Noto Sans SC',sans-serif;
+  font-size: clamp(42px,5.5vw,82px);
+}
+
+@media(max-width:900px) {
+  .language-switch {
+    height: 36px;
+    margin-left: auto;
+    margin-right: 8px;
+  }
+  .language-switch select { width: 72px; }
+  html[lang="en"] .hero-copy { width: 86vw; }
+  html[lang="en"] .hero-copy h1 { font-size: clamp(46px,14vw,76px); }
+  html[lang="en"] .community-title h2 { font-size: 38px; }
+}

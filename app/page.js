@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { localizeNode, pageMeta } from './i18n';
 
 const factions = [
   {id:'iron',name:'铁血军团',en:'IRON BLOOD LEGION',role:'秩序 / 防御 / 正规军',desc:'以军事秩序维持边境稳定。重装甲、严密编队与持续火力构成他们的战争语言。',ship:'破晓级护卫舰',shipDesc:'铁血军团·破晓级护卫舰（Dawn-Class Frigate）：机动性极强，搭载中/轻型武器与基础电子战模块，适合侦察、巡逻和快速拦截。采用轻量合金装甲，兼顾防护与灵活度。',strength:'装甲防御 92',weak:'机动效率 48'},
@@ -26,9 +27,10 @@ const nav = [
   ['home','纪元'],['demo','实录'],['lore','世界'],['factions','势力'],['dynamic','动态世界'],['gallery','美术'],['community','社区']
 ];
 
-function SiteFooter(){
+function SiteFooter({lang}){
   const columns=[['游戏','关于游戏','派系介绍','玩法特色','新闻资讯'],['社区','官方论坛','Discord','Steam 社区','玩家手册'],['支持','帮助中心','系统要求','联系我们','反馈问题'],['法律','隐私政策','用户协议','Cookie 政策']];
-  return <footer className="site-footer"><div className="footer-brand"><b><i className="fa-solid fa-ring"/> 第二纪元</b><p>征服银河<br/>从此刻开始</p></div>{columns.map(([title,...items])=><div className="footer-column" key={title}><b>{title}</b>{items.map(x=><a href="#home" key={x}>{x}</a>)}</div>)}<div className="footer-bottom"><span>© 2026 第二纪元. 保留所有权利。</span><div><a href="#home" aria-label="Steam"><i className="fa-brands fa-steam"/></a><a href="#home" aria-label="Discord"><i className="fa-brands fa-discord"/></a><a href="#home" aria-label="视频频道"><i className="fa-brands fa-youtube"/></a><a href="#home" aria-label="X"><i className="fa-brands fa-x-twitter"/></a></div><span>Second Epoch | PolarDog Studio</span></div></footer>;
+  const footer=<footer className="site-footer"><div className="footer-brand"><b><i className="fa-solid fa-ring"/> 第二纪元</b><p>征服银河<br/>从此刻开始</p></div>{columns.map(([title,...items])=><div className="footer-column" key={title}><b>{title}</b>{items.map(x=><a href="#home" key={x}>{x}</a>)}</div>)}<div className="footer-bottom"><span>© 2026 第二纪元. 保留所有权利。</span><div><a href="#home" aria-label="Steam"><i className="fa-brands fa-steam"/></a><a href="#home" aria-label="Discord"><i className="fa-brands fa-discord"/></a><a href="#home" aria-label="视频频道"><i className="fa-brands fa-youtube"/></a><a href="#home" aria-label="X"><i className="fa-brands fa-x-twitter"/></a></div><span>Second Epoch | PolarDog Studio</span></div></footer>;
+  return localizeNode(footer,lang);
 }
 
 export default function Home(){
@@ -39,8 +41,22 @@ export default function Home(){
   const [joinOpen,setJoinOpen]=useState(false);
   const [joined,setJoined]=useState(false);
   const [menu,setMenu]=useState(false);
+  const [lang,setLang]=useState('zh');
+  const [languageReady,setLanguageReady]=useState(false);
   const selected=factions[faction];
   const selectedShip=factions[ship];
+
+  useEffect(()=>{
+    const saved=localStorage.getItem('second-epoch-language');
+    if(saved==='zh'||saved==='en')setLang(saved);
+    setLanguageReady(true);
+  },[]);
+
+  useEffect(()=>{
+    if(!languageReady)return;
+    localStorage.setItem('second-epoch-language',lang);
+    document.documentElement.lang=lang==='en'?'en':'zh-CN';
+  },[lang,languageReady]);
 
   useEffect(()=>{
     const root=document.documentElement;
@@ -80,12 +96,13 @@ export default function Home(){
     return()=>{removeEventListener('scroll',onScroll);removeEventListener('resize',onScroll);cancelAnimationFrame(raf)};
   },[]);
 
-  return <main className="epoch-site">
+  const content=<main className="epoch-site">
     <div className="global-space" aria-hidden="true"><div className="stars"/></div>
     <aside className="route-indicator" aria-label="主分页导航"><i className="route-rail"/><b className="route-current"/>{nav.map(([id,label],i)=><a key={id} href={`#${id}`} className={active===id?'active':''} style={{'--n':i}} aria-label={label}><i/><span>{label}</span></a>)}</aside>
     <header className="epoch-nav">
       <a href="#home" className="epoch-brand"><span>II</span><b>第二纪元<small>THE SECOND EPOCH</small></b></a>
       <nav className={menu?'open':''}>{nav.map(([id,label])=><a key={id} className={active===id?'active':''} href={`#${id}`}>{label}</a>)}</nav>
+      <label className="language-switch"><i className="fa-solid fa-globe" aria-hidden="true"/><span className="sr-only">选择语言</span><select value={lang} onChange={e=>setLang(e.target.value)} aria-label="选择语言"><option value="zh">中文</option><option value="en">English</option></select><i className="fa-solid fa-chevron-down" aria-hidden="true"/></label>
       <a className="nav-enter" href="#community">进入宇宙</a>
       <button className="menu-button" onClick={()=>setMenu(!menu)} aria-label="菜单"><i className="fa-solid fa-bars"/></button>
     </header>
@@ -126,9 +143,14 @@ export default function Home(){
       ['fa-brands fa-steam','STEAM','将《第二纪元》加入愿望单，获取最新游戏资讯','加入愿望单'],
       ['fa-brands fa-discord','DISCORD','加入官方 Discord，与开发者和舰长直接交流','加入 Discord'],
       ['fa-brands fa-weibo','微博','关注官方微博，获取中文独家内容','关注微博']
-    ].map(([icon,title,copy,action])=><article key={title}><i className={icon}/><h3>{title}</h3><p>{copy}</p><a href="#home">{action} <i className="fa-solid fa-arrow-right"/></a></article>)}</div><SiteFooter/></div></section>
+    ].map(([icon,title,copy,action])=><article key={title}><i className={icon}/><h3>{title}</h3><p>{copy}</p><a href="#home">{action} <i className="fa-solid fa-arrow-right"/></a></article>)}</div><SiteFooter lang={lang}/></div></section>
 
     {art!==null&&<div className="art-modal" role="dialog" aria-modal="true"><button className="modal-close" onClick={()=>setArt(null)} aria-label="关闭"><i className="fa-solid fa-xmark"/></button><button className="modal-prev" onClick={()=>setArt((art-1+gallery.length)%gallery.length)} aria-label="上一张"><i className="fa-solid fa-arrow-left"/></button><figure><img src={gallery[art].src} alt={gallery[art].title}/><figcaption><b>{gallery[art].title}</b><span>{gallery[art].meta}</span><small>{String(art+1).padStart(2,'0')} / {String(gallery.length).padStart(2,'0')}</small></figcaption></figure><button className="modal-next" onClick={()=>setArt((art+1)%gallery.length)} aria-label="下一张"><i className="fa-solid fa-arrow-right"/></button></div>}
     {joinOpen&&<div className="join-dialog-backdrop" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setJoinOpen(false)}}><section className="join-dialog" role="dialog" aria-modal="true" aria-labelledby="join-title"><button className="join-close" onClick={()=>setJoinOpen(false)} aria-label="关闭预约窗口"><i className="fa-solid fa-xmark"/></button>{joined?<div className="join-success"><i className="fa-solid fa-check"/><span>RESERVATION RECEIVED</span><h2>舰长档案已登记</h2><p>测试资格开放后，我们会通过你的邮箱发送通知。</p><button onClick={()=>setJoinOpen(false)}>完成</button></div>:<form onSubmit={e=>{e.preventDefault();setJoined(true)}}><span>CAPTAIN REGISTRATION / 227</span><h2 id="join-title">立即预约</h2><p>登记你的舰长身份，等待裂隙航线开放。</p><label htmlFor="join-name">昵称</label><input id="join-name" name="nickname" type="text" placeholder="输入你的舰长昵称" required maxLength={24}/><label htmlFor="join-email">Email</label><input id="join-email" name="email" type="email" placeholder="captain@example.com" required/><button type="submit">提交预约 <i className="fa-solid fa-arrow-right"/></button></form>}</section></div>}
   </main>;
+  return <>
+    <title>{pageMeta[lang].title}</title>
+    <meta name="description" content={pageMeta[lang].description}/>
+    {localizeNode(content,lang)}
+  </>;
 }
