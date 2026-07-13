@@ -69,7 +69,7 @@ export default function Home(){
         const progress=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight+r.height)));
         const enter=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight*.45)));
         const exit=Math.max(0,Math.min(1,r.bottom/(innerHeight*.45)));
-        const visible=el.dataset.main?Math.min(enter,exit):Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.9));
+        const visible=el.dataset.main?Math.min(enter,exit):Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.5));
         el.style.setProperty('--p',progress.toFixed(4));
         el.style.setProperty('--v',visible.toFixed(4));
         if(!el.dataset.main){
