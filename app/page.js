@@ -102,7 +102,7 @@ export default function Home(){
     <header className="epoch-nav">
       <a href="#home" className="epoch-brand"><span>II</span><b>第二纪元<small>THE SECOND EPOCH</small></b></a>
       <nav className={menu?'open':''}>{nav.map(([id,label])=><a key={id} className={active===id?'active':''} href={`#${id}`}>{label}</a>)}</nav>
-      <label className="language-switch"><i className="fa-solid fa-globe" aria-hidden="true"/><span className="sr-only">选择语言</span><select value={lang} onChange={e=>setLang(e.target.value)} aria-label="选择语言"><option value="zh">中文</option><option value="en">English</option></select><i className="fa-solid fa-chevron-down" aria-hidden="true"/></label>
+      <label className="language-switch"><i className="fa-solid fa-globe" aria-hidden="true"/><span className="sr-only">选择语言</span><select value={lang} onChange={e=>{setLang(e.target.value);e.currentTarget.blur()}} aria-label="选择语言"><option value="zh">中文</option><option value="en">English</option></select><i className="fa-solid fa-chevron-down" aria-hidden="true"/></label>
       <a className="nav-enter" href="#community">进入宇宙</a>
       <button className="menu-button" onClick={()=>setMenu(!menu)} aria-label="菜单"><i className="fa-solid fa-bars"/></button>
     </header>

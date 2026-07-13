@@ -417,7 +417,7 @@
   --thruster-left-offset: min(53.04vw,936px);
   --thruster-top-offset: min(41.33vw,729.4px);
   position: absolute;
-  z-index: 0;
+  z-index: 1;
   inset: auto;
   left: calc(78% - var(--thruster-left-offset));
   top: calc(108% - var(--thruster-top-offset));
@@ -432,7 +432,7 @@
   mix-blend-mode: screen;
   transform: translate3d(0,calc((var(--p) - .5) * -18vh),0);
   transform-origin: bottom right;
-  animation: heroThrusterPulse 1.65s ease-in-out 4.2s infinite both;
+  animation: heroThrusterPulse 1.65s ease-in-out 1.2s infinite both;
   will-change: opacity,filter,transform;
 }
 
@@ -459,6 +459,45 @@
     animation: none;
     opacity: .58;
     filter: blur(8px);
+  }
+}
+
+/* The final gate remains a traveling overlay, not a standalone chapter. */
+.transition-page.gate-page {
+  height: 52vh !important;
+  min-height: 52vh !important;
+}
+.transition-page.gate-page .transition-overlay {
+  height: 96vh !important;
+  min-height: 620px !important;
+  opacity: clamp(0,calc(var(--v) * 1.55),1) !important;
+  transform: translate3d(0,calc(-50% + (.5 - var(--p)) * 34vh),0) !important;
+}
+.transition-page.gate-page .gate-core,
+.transition-page.gate-page .gate-copy {
+  opacity: clamp(0,calc(var(--v) * 1.7),1) !important;
+  transform: translateY(calc((.5 - var(--p)) * 13vh));
+  will-change: opacity,transform;
+}
+@media(max-width:900px) {
+  .transition-page.gate-page {
+    height: 58svh !important;
+    min-height: 58svh !important;
+  }
+  .transition-page.gate-page .transition-overlay {
+    height: 94svh !important;
+    transform: translate3d(0,calc(-50% + (.5 - var(--p)) * 28svh),0) !important;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .transition-page.gate-page .transition-overlay,
+  .transition-page.gate-page .gate-core,
+  .transition-page.gate-page .gate-copy {
+    transform: translate3d(0,-50%,0) !important;
+  }
+  .transition-page.gate-page .gate-core,
+  .transition-page.gate-page .gate-copy {
+    transform: none !important;
   }
 }
 
