@@ -41,9 +41,9 @@
 .manifesto-page .transition-overlay p { max-width: 720px; margin: 12px auto; color: #9ba9ad; line-height: 2; }
 .quote-page .transition-overlay>div { transform: scale(calc(.92 + var(--v) * .08)); }
 .quote-page .transition-overlay blockquote { margin: 24px; }
-.quote-rotation { position: relative; height: min(58vh,560px); }
-.quote-rotation article { position: absolute; inset: 0; display: grid; place-content: center; opacity: var(--quote-opacity,0); transform: translateY(var(--quote-y,0)); transition: opacity 90ms linear; }
-.quote-rotation article blockquote { min-width: min(1050px,82vw); }
+.quote-rotation { width: min(1500px,92vw) !important; height: auto; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(24px,3vw,56px); transform: none !important; }
+.quote-rotation article { position: relative; min-width: 0; padding: 30px 24px; display: flex; flex-direction: column; justify-content: center; border-top: 1px solid rgba(205,226,231,.2); border-bottom: 1px solid rgba(205,226,231,.1); opacity: 1; transform: none; }
+.quote-rotation article blockquote { min-width: 0; margin: 24px 0 !important; font-size: clamp(24px,2.25vw,40px) !important; line-height: 1.55 !important; }
 .lore-lead { max-width: 680px; color: #aab7bb; font-size: 14px; line-height: 1.9; }
 .join-now { cursor: pointer; background: rgba(3,7,9,.46); }
 .community-join { display: inline-flex; margin-top: 24px; }
@@ -262,4 +262,44 @@
 .transition-page.quote-page {
   min-height: 90vh !important;
   height: 90vh;
+}
+
+/* The hero uses two image planes: keep the base fixed and lift only the top plane. */
+.hero-page .page-sticky:after {
+  inset: -18vh 0;
+  transform: translate3d(0,calc((var(--p) - .5) * -32vh),0) scale(1.08);
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Fit both gallery rows inside the chapter viewport at every desktop height. */
+.gallery-page .page-sticky {
+  display: flex;
+  flex-direction: column;
+  padding: 10vh 3vw 4vh;
+}
+.gallery-page .gallery-title { flex: 0 0 auto; }
+.gallery-page .gallery-grid {
+  flex: 0 0 42vh;
+  height: 42vh;
+  min-height: 0;
+  width: 100%;
+  grid-template-rows: repeat(2,minmax(0,1fr));
+  margin-top: 20px;
+}
+.gallery-page .gallery-grid button { min-height: 0; }
+.gallery-page .gallery-grid img {
+  height: 100%;
+  min-height: 0;
+}
+@media(max-width:900px) {
+  .hero-page .page-sticky:after {
+    inset: -14vh 0;
+    transform: translate3d(0,calc((var(--p) - .5) * -22vh),0) scale(1.08);
+  }
+  .quote-rotation { grid-template-columns: 1fr; gap: 10px; }
+  .quote-rotation article { padding: 14px 16px; }
+  .quote-rotation article blockquote { margin: 10px 0 !important; font-size: 20px !important; }
+  .gallery-page .page-sticky { padding: 10vh 16px 3vh; }
+  .gallery-page .gallery-grid { flex-basis: 48vh; height: 48vh; }
 }

@@ -56,14 +56,6 @@ export default function Home(){
         const visible=el.dataset.main?Math.min(enter,exit):Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.9));
         el.style.setProperty('--p',progress.toFixed(4));
         el.style.setProperty('--v',visible.toFixed(4));
-        if(el.classList.contains('quote-page')){
-          const centers=[.28,.5,.72];
-          el.querySelectorAll('.quote-rotation article').forEach((quote,index)=>{
-            const delta=progress-centers[index];
-            quote.style.setProperty('--quote-opacity',Math.max(0,1-Math.abs(delta)*10).toFixed(4));
-            quote.style.setProperty('--quote-y',`${(delta*-150).toFixed(2)}px`);
-          });
-        }
         if(!el.dataset.main){
           const slotTop=scrollY+r.top;
           const zoomRaw=Math.max(0,Math.min(1,(scrollY-(slotTop-innerHeight*.6))/innerHeight));
@@ -94,7 +86,7 @@ export default function Home(){
     <header className="epoch-nav">
       <a href="#home" className="epoch-brand"><span>II</span><b>第二纪元<small>THE SECOND EPOCH</small></b></a>
       <nav className={menu?'open':''}>{nav.map(([id,label])=><a key={id} className={active===id?'active':''} href={`#${id}`}>{label}</a>)}</nav>
-      <span className="world-online"><i/>世界在线</span><a className="nav-enter" href="#community">进入宇宙</a>
+      <a className="nav-enter" href="#community">进入宇宙</a>
       <button className="menu-button" onClick={()=>setMenu(!menu)} aria-label="菜单"><i className="fa-solid fa-bars"/></button>
     </header>
 
