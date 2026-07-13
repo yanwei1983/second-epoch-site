@@ -95,7 +95,7 @@ export default function Home(){
       <div className="hero-telemetry"><span>SECTOR / NEW ERA</span><b>世界持续运行中</b><small>舰长身份等待同步</small></div>
     </div></section>
 
-    <section id="manifesto" data-scroll-page className="transition-page manifesto-page"><div className="transition-overlay"><div><span>THE WORLD IS ALREADY MOVING</span><h2>这不是等待英雄抵达的舞台。</h2><p>1000+ 星系、约 700 座空间站与跨越高安、低安、零安的航线，正在同一个世界里持续运行。</p><p>你的战斗、采矿、贸易、护航与袭击，都会成为下一次区域变化的原因。</p></div></div></section>
+    <section id="manifesto" data-scroll-page className="transition-page manifesto-page"><div className="transition-overlay"><div><span>THE WORLD IS ALREADY MOVING</span><h2>这是等待英雄抵达的舞台。</h2><p>1000+ 星系、约 700 座空间站与跨越高安、低安、零安的航线，正在同一个世界里持续运行。</p><p>你的战斗、采矿、贸易、护航与袭击，都会成为下一次区域变化的原因。</p></div></div></section>
 
     <section id="demo" data-main data-scroll-page className="main-page demo-page"><div className="page-sticky"><div className="demo-copy"><span className="eyebrow">IN-ENGINE RECORD</span><h2>一场战争，<br/>从一次锁定开始。</h2><p>固定 2.5D 视角保持高速、清晰与低眩晕体验，从小队行动延伸到万人级星舰战争。</p></div><div className="demo-window"><div className="demo-shot"/><div className="demo-hud"><span>COMBAT RECORD / 04:18</span><button aria-label="播放演示"><i className="fa-solid fa-play"/></button><b>舰队交战实录</b></div></div></div></section>
 
