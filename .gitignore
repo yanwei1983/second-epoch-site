@@ -1,3 +1,9 @@
 node_modules
 .next
 *.log
+.playwright-cli
+dist
+out
+output
+site-build.tar.gz
+github-pages.zip
