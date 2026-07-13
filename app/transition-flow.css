@@ -268,17 +268,23 @@
   height: 90vh;
 }
 
-/* The hero uses two image planes: keep the base fixed and lift only the top plane. */
+/* Keep the base scene fixed and lift only the isolated foreground ship. */
 .hero-page .page-sticky:after {
-  inset: -18vh 0;
-  transform: translate3d(0,calc((var(--p) - .5) * -32vh),0) scale(1.08);
-  transform-origin: center;
+  inset: 0;
+  background-image: url('/hero-foreground-ship.png');
+  background-repeat: no-repeat;
+  background-size: min(68vw,1200px) auto;
+  background-position: 78% 108%;
+  opacity: calc(.55 + var(--v) * .3);
+  mix-blend-mode: normal;
+  transform: translate3d(0,calc((var(--p) - .5) * -18vh),0);
+  transform-origin: bottom right;
   will-change: transform;
   animation: heroFleetArrival 5.2s cubic-bezier(.16,1,.3,1) both;
 }
 @keyframes heroFleetArrival {
-  from { background-position: 70% calc(50% + 22vh); }
-  to { background-position: 70% 50%; }
+  from { background-position: 78% calc(108% + 28vh); }
+  to { background-position: 78% 108%; }
 }
 
 /* Fit both gallery rows inside the chapter viewport at every desktop height. */
@@ -303,8 +309,9 @@
 }
 @media(max-width:900px) {
   .hero-page .page-sticky:after {
-    inset: -14vh 0;
-    transform: translate3d(0,calc((var(--p) - .5) * -22vh),0) scale(1.08);
+    background-size: min(105vw,900px) auto;
+    background-position: 70% 104%;
+    transform: translate3d(0,calc((var(--p) - .5) * -12vh),0);
   }
   .quote-rotation { width: 94vw !important; height: 74vh; gap: 8px; }
   .quote-rotation article { padding: 6px 12px; }
@@ -315,6 +322,6 @@
 @media(prefers-reduced-motion:reduce) {
   .hero-page .page-sticky:after {
     animation: none;
-    background-position: 70% 50%;
+    background-position: 78% 108%;
   }
 }
