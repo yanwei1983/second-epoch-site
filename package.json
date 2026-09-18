@@ -1,1 +1,17 @@
-{"scripts":{"dev":"next dev","build":"next build && node scripts/package-sites.mjs","build:static":"next build","deploy:github-pages":"powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-github-pages.ps1","start":"next start"},"dependencies":{"@fortawesome/fontawesome-free":"^6.7.2","next":"^15.3.4","react":"^19.1.0","react-dom":"^19.1.0"},"devDependencies":{}}
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && node scripts/package-sites.mjs",
+    "build:static": "next build",
+    "deploy:github-pages": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-github-pages.ps1",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "next": "^15.3.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {},
+  "packageManager": "pnpm@11.19.0"
+}

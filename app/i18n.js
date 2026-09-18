@@ -1,6 +1,15 @@
-import { cloneElement, isValidElement } from 'react';
+import { Children, cloneElement, isValidElement } from 'react';
 
 const EN = {
+  "船员": "Crew",
+  "开放宇宙": "Open universe",
+  "核心船员养成": "Build your crew",
+  "驾驶你的舰船，集结值得信赖的船员，在持续变化的宇宙中选择自己的航路。": "Command your ship, gather a crew you trust, and chart your own course through a changing universe.",
+  "你的故事，从相遇开始。": "Your story begins with an encounter.",
+  "在空间站结识伙伴，在不同势力之间寻找航路，在世界的变化中发现新的机遇。": "Meet companions at stations, navigate between rival powers, and find opportunity in a changing world.",
+  "一场战斗、一批补给、一次同行，都可能成为下一段故事的起点。": "A battle, a shipment, a journey together: each could begin your next story.",
+  "了解舰船岗位与船员搭配": "Explore ship duties and crew combinations",
+
   '第二纪元':'SECOND EPOCH',
   '纪元':'Epoch', '实录':'Combat', '世界':'World', '势力':'Factions', '动态世界':'Living World', '美术':'Art', '社区':'Community',
   '进入宇宙':'ENTER UNIVERSE', '菜单':'Menu', '选择语言':'Select language', '主分页导航':'Primary section navigation', '视频频道':'Video channel', '中文':'中文',
@@ -75,7 +84,7 @@ const localizedProps = ['aria-label', 'placeholder', 'alt', 'title'];
 
 export function localizeNode(node, lang) {
   if (typeof node === 'string') return translateString(node, lang);
-  if (Array.isArray(node)) return node.map(child => localizeNode(child, lang));
+  if (Array.isArray(node)) return Children.map(node, child => localizeNode(child, lang));
   if (!isValidElement(node)) return node;
   const props = {};
   localizedProps.forEach(key => {
@@ -88,10 +97,10 @@ export function localizeNode(node, lang) {
 export const pageMeta = {
   zh: {
     title: '第二纪元 | 开放宇宙星舰战争 MMO',
-    description: '玩家行为会改变世界、并持续产生机遇与风险的开放宇宙星舰战争 MMO。'
+    description: '驾驶舰船、招募船员，在持续变化的宇宙中探索、贸易与战斗。'
   },
   en: {
     title: 'Second Epoch | Open-Universe Starship Warfare MMO',
-    description: 'An open-universe starship warfare MMO where player actions reshape a persistent world.'
+    description: 'Command your ship, build your crew, and explore, trade, and fight in a changing universe.'
   }
 };

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { localizeNode, pageMeta } from './i18n';
+import { CrewChapter, LivingWorldChapter } from './living-chapters';
 
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const assetUrl = path => publicBasePath && (path === publicBasePath || path.startsWith(`${publicBasePath}/`))
@@ -29,7 +30,7 @@ const gallery = [
 ];
 
 const nav = [
-  ['home','纪元'],['demo','实录'],['lore','世界'],['factions','势力'],['dynamic','动态世界'],['gallery','美术'],['community','社区']
+  ['home','纪元'],['demo','实录'],['lore','世界'],['factions','势力'],['crew','船员'],['dynamic','动态世界'],['gallery','美术'],['community','社区']
 ];
 
 function SiteFooter({lang}){
@@ -66,9 +67,15 @@ export default function Home(){
   useEffect(()=>{
     const root=document.documentElement;
     const pages=[...document.querySelectorAll('[data-scroll-page]')];
+    const mainPages=pages.filter(el=>el.hasAttribute('data-main'));
+    const neighbors=new Map(pages.filter(el=>!el.hasAttribute('data-main')).map(el=>{
+      const index=pages.indexOf(el);
+      return [el,[pages.slice(0,index).reverse().find(page=>page.hasAttribute('data-main')),pages.slice(index+1).find(page=>page.hasAttribute('data-main'))].filter(Boolean)];
+    }));
     let raf=0;
     const update=()=>{
-      let best='home',distance=Infinity;
+      let best='home',distance=Infinity,detailChapter=null;
+      const shades=new Map(mainPages.map(el=>[el,0]));
       pages.forEach(el=>{
         const r=el.getBoundingClientRect();
         const progress=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight+r.height)));
@@ -77,6 +84,10 @@ export default function Home(){
         const visible=el.dataset.main?Math.min(enter,exit):Math.max(0,1-Math.abs(r.top+r.height/2-innerHeight/2)/(innerHeight*.5));
         el.style.setProperty('--p',progress.toFixed(4));
         el.style.setProperty('--v',visible.toFixed(4));
+        if(neighbors.has(el)){
+          const shade=Math.min(1,visible*1.4)*.88;
+          neighbors.get(el).forEach(page=>shades.set(page,Math.max(shades.get(page),shade)));
+        }
         if(!el.dataset.main){
           const slotTop=scrollY+r.top;
           const zoomRaw=Math.max(0,Math.min(1,(scrollY-(slotTop-innerHeight*.6))/innerHeight));
@@ -90,10 +101,17 @@ export default function Home(){
           el.style.setProperty('--visual-y',`${(baseY+(targetY-baseY)*zoom).toFixed(2)}px`);
           el.style.setProperty('--visual-opacity',fade.toFixed(4));
           el.dataset.visible=visible>.05?'true':'false';
+          if(el.dataset.chapter){
+            el.inert=visible<=.65;
+            el.dataset.interactive=visible>.65?'true':'false';
+            if(visible>.65)detailChapter=el.dataset.chapter;
+          }
         }
         if(el.dataset.main){const d=Math.abs(r.top+r.height/2-innerHeight/2);if(d<distance){distance=d;best=el.id}}
       });
+      shades.forEach((shade,page)=>page.style.setProperty('--transition-shade',shade.toFixed(4)));
       root.style.setProperty('--route',(scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)).toFixed(4));
+      if(detailChapter)best=detailChapter;
       setActive(x=>x===best?x:best);raf=0;
     };
     const onScroll=()=>{if(!raf)raf=requestAnimationFrame(update)};
@@ -106,45 +124,45 @@ export default function Home(){
     <aside className="route-indicator" aria-label="主分页导航"><i className="route-rail"/><b className="route-current"/>{nav.map(([id,label],i)=><a key={id} href={`#${id}`} className={active===id?'active':''} style={{'--n':i}} aria-label={label}><i/><span>{label}</span></a>)}</aside>
     <header className="epoch-nav">
       <a href="#home" className="epoch-brand"><span>II</span><b>第二纪元<small>THE SECOND EPOCH</small></b></a>
-      <nav className={menu?'open':''}>{nav.map(([id,label])=><a key={id} className={active===id?'active':''} href={`#${id}`}>{label}</a>)}</nav>
+      <nav className={menu?'open':''}>{nav.map(([id,label])=><a key={id} className={active===id?'active':''} href={`#${id}`} onClick={() => setMenu(false)}>{label}</a>)}</nav>
       <label className="language-switch"><i className="fa-solid fa-globe" aria-hidden="true"/><span className="sr-only">选择语言</span><select value={lang} onChange={e=>{setLang(e.target.value);e.currentTarget.blur()}} aria-label="选择语言"><option value="zh">中文</option><option value="en">English</option></select><i className="fa-solid fa-chevron-down" aria-hidden="true"/></label>
       <a className="nav-enter" href="#community">进入宇宙</a>
       <button className="menu-button" onClick={()=>setMenu(!menu)} aria-label="菜单"><i className="fa-solid fa-bars"/></button>
     </header>
 
-    <section id="home" data-main data-scroll-page className="main-page hero-page"><div className="page-sticky">
-      <div className="hero-ship"/><div className="hero-copy"><span className="eyebrow">开放宇宙大规模星舰战争 MMO</span><h1>第二纪元</h1><p>玩家行为会改变世界、并持续产生机遇与风险的开放宇宙星舰战争 MMO。</p><div className="hero-tags"><span>单服开放宇宙</span><span>万人星舰战争</span><span>动态世界经济</span></div><button className="primary-action join-now" onClick={()=>{setJoined(false);setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div>
+    <section id="home" data-main data-scroll-page className="main-page hero-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/>
+      <div className="hero-ship"/><div className="hero-copy"><span className="eyebrow">开放宇宙大规模星舰战争 MMO</span><h1>第二纪元</h1><p>驾驶你的舰船，集结值得信赖的船员，在持续变化的宇宙中选择自己的航路。</p><div className="hero-tags"><span>开放宇宙</span><span>核心船员养成</span><span>动态世界</span></div><button className="primary-action join-now" onClick={()=>{setJoined(false);setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div>
       <div className="hero-telemetry"><span>SECTOR / NEW ERA</span><b>世界持续运行中</b><small>舰长身份等待同步</small></div>
     </div></section>
 
-    <section id="manifesto" data-scroll-page className="transition-page manifesto-page"><div className="transition-overlay"><div><span>THE WORLD IS ALREADY MOVING</span><h2>这是等待英雄抵达的舞台。</h2><p>1000+ 星系、约 700 座空间站与跨越高安、低安、零安的航线，正在同一个世界里持续运行。</p><p>你的战斗、采矿、贸易、护航与袭击，都会成为下一次区域变化的原因。</p></div></div></section>
+    <section id="manifesto" data-scroll-page className="transition-page manifesto-page"><div className="transition-overlay"><div><span>THE WORLD IS ALREADY MOVING</span><h2>你的故事，从相遇开始。</h2><p>在空间站结识伙伴，在不同势力之间寻找航路，在世界的变化中发现新的机遇。</p><p>一场战斗、一批补给、一次同行，都可能成为下一段故事的起点。</p></div></div></section>
 
-    <section id="demo" data-main data-scroll-page className="main-page demo-page"><div className="page-sticky"><div className="demo-copy"><span className="eyebrow">IN-ENGINE RECORD</span><h2>一场战争，<br/>从一次锁定开始。</h2><p>固定 2.5D 视角保持高速、清晰与低眩晕体验，从小队行动延伸到万人级星舰战争。</p></div><div className="demo-window"><div className="demo-shot"/><div className="demo-hud"><span>COMBAT RECORD / 04:18</span><button aria-label="播放演示"><i className="fa-solid fa-play"/></button><b>舰队交战实录</b></div></div></div></section>
+    <section id="demo" data-main data-scroll-page className="main-page demo-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/><div className="demo-copy"><span className="eyebrow">IN-ENGINE RECORD</span><h2>一场战争，<br/>从一次锁定开始。</h2><p>固定 2.5D 视角保持高速、清晰与低眩晕体验，从小队行动延伸到万人级星舰战争。</p></div><div className="demo-window"><div className="demo-shot"/><div className="demo-hud"><span>COMBAT RECORD / 04:18</span><button aria-label="播放演示"><i className="fa-solid fa-play"/></button><b>舰队交战实录</b></div></div></div></section>
 
     <section data-scroll-page className="transition-page dust-page"><div className="transition-overlay"><div className="dust">{Array.from({length:48},(_,i)=><i key={i} style={{'--i':i}}/>)}</div><div className="dust-label"><span>STAR DUST / 02</span><b>穿越旧宇宙的余烬</b></div></div></section>
 
-    <section id="lore" data-main data-scroll-page className="main-page lore-page"><div className="page-sticky"><div className="lore-art"/><div className="lore-copy"><span className="eyebrow">RIFT ARRIVAL / NEW CALENDAR 227</span><h2>你迟到了<br/>两个世纪。</h2><p className="lore-lead">最后一批“虫洞逃亡计划”船队因量子相位偏移，在时间线上断续抵达。如今，裂隙口 #17 再次波动，而你正是本应在新历 002 年现身的时迟裂隙移民。</p><div className="timeline"><span><b>新历 001 年</b>冷冻移民、自适应人类与未知意识体穿越未知裂隙</span><span><b>跨越百年</b>穿越者因虫洞不稳定而分批、滞后抵达新宇宙</span><span><b>新历 227 年</b>裂隙口 #17 再度波动，小批次穿越者重新浮现</span><span><b>人权协议</b>任何穿越个体不得被视作势力资产，必须自主选择归属</span></div></div></div></section>
+    <section id="lore" data-main data-scroll-page className="main-page lore-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/><div className="lore-art"/><div className="lore-copy"><span className="eyebrow">RIFT ARRIVAL / NEW CALENDAR 227</span><h2>你迟到了<br/>两个世纪。</h2><p className="lore-lead">最后一批“虫洞逃亡计划”船队因量子相位偏移，在时间线上断续抵达。如今，裂隙口 #17 再次波动，而你正是本应在新历 002 年现身的时迟裂隙移民。</p><div className="timeline"><span><b>新历 001 年</b>冷冻移民、自适应人类与未知意识体穿越未知裂隙</span><span><b>跨越百年</b>穿越者因虫洞不稳定而分批、滞后抵达新宇宙</span><span><b>新历 227 年</b>裂隙口 #17 再度波动，小批次穿越者重新浮现</span><span><b>人权协议</b>任何穿越个体不得被视作势力资产，必须自主选择归属</span></div></div></div></section>
 
     <section data-scroll-page className="transition-page quote-page"><div className="transition-overlay"><div className="quote-rotation"><article><blockquote>这里没有正义，只有胜者与败者。<br/>我们在深空中书写自己的法则。</blockquote><p>— 《星际法典》引言</p></article><article><blockquote>每一艘战舰都是一颗星辰，而你的舰队就是<br/>整片银河。</blockquote><p>— 铁血军团元帅 索尔·瓦伦</p></article><article><blockquote>虚空从不仁慈，但虚空从不说谎。<br/>在黑暗中，真相反而更加清晰。</blockquote><p>— 星空海盗王 红狐</p></article></div></div></section>
 
-    <section id="factions" data-main data-scroll-page className="main-page faction-page"><div className="page-sticky">
+    <section id="factions" data-main data-scroll-page className="main-page faction-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/>
       <div className="faction-art" style={{backgroundImage:`linear-gradient(90deg,rgba(3,6,8,.96) 0%,rgba(3,6,8,.46) 48%,rgba(3,6,8,.08)),url('${assetUrl(`/factions/${selected.id}.png`)}')`}}/>
       <div className="faction-tabs">{factions.map((f,i)=><button key={f.id} className={faction===i?'active':''} onClick={()=>{setFaction(i);setShip(i)}}><img src={assetUrl(`/badges/${f.id}.png`)} alt=""/><span>{String(i+1).padStart(2,'0')}</span>{f.name}</button>)}</div>
       <div className="faction-copy"><span className="eyebrow">EIGHT POWERS / MAJOR FACTION {String(faction+1).padStart(2,'0')}</span><h2>{selected.name}</h2><small>{selected.en}</small><p>{selected.desc}</p><div className="faction-stats"><span>{selected.strength}</span><span>{selected.weak}</span></div></div>
       <div className="hostile-strip"><span>边境威胁</span><b>黑星海盗团</b><b>光明狂热者</b></div>
     </div></section>
 
-    <section data-scroll-page className="transition-page ship-page"><div className="transition-overlay"><div className="ship-blueprint"><img key={selectedShip.id} src={assetUrl(`/ships/${selectedShip.id}.png`)} alt={selectedShip.ship}/><div className="scan-line"/><span className="ship-counter">{String(ship+1).padStart(2,'0')} / {String(factions.length).padStart(2,'0')}</span></div><div className="ship-copy"><span>{selectedShip.en} / FRIGATE ARCHIVE</span><h2>{selectedShip.ship}</h2><p>{selectedShip.shipDesc}</p><div><b>舰体许可</b><em>AUTHORIZED</em></div><div className="ship-controls"><button onClick={()=>setShip((ship-1+factions.length)%factions.length)} aria-label="上一艘护卫舰"><i className="fa-solid fa-arrow-left"/></button><div>{factions.map((f,i)=><button key={f.id} className={ship===i?'active':''} onClick={()=>setShip(i)} aria-label={`查看${f.ship}`}/>)}</div><button onClick={()=>setShip((ship+1)%factions.length)} aria-label="下一艘护卫舰"><i className="fa-solid fa-arrow-right"/></button></div></div></div></section>
+    <section data-scroll-page className="transition-page ship-page"><div className="transition-overlay"><div className="ship-blueprint"><img key={selectedShip.id} src={assetUrl(`/ships/${selectedShip.id}.png`)} alt={selectedShip.ship}/><div className="scan-line"/><span className="ship-counter">{String(ship+1).padStart(2,'0')} / {String(factions.length).padStart(2,'0')}</span></div><div className="ship-copy"><span>{selectedShip.en} / FRIGATE ARCHIVE</span><h2>{selectedShip.ship}</h2><p>{selectedShip.shipDesc}</p><a className="ship-crew-link" href="#crew">{'了解舰船岗位与船员搭配'} <span aria-hidden="true">↗</span></a><div className="ship-controls"><button onClick={()=>setShip((ship-1+factions.length)%factions.length)} aria-label="上一艘护卫舰"><i className="fa-solid fa-arrow-left"/></button><div>{factions.map((f,i)=><button key={f.id} className={ship===i?'active':''} onClick={()=>setShip(i)} aria-label={`查看${f.ship}`}/>)}</div><button onClick={()=>setShip((ship+1)%factions.length)} aria-label="下一艘护卫舰"><i className="fa-solid fa-arrow-right"/></button></div></div></div></section>
 
-    <section id="dynamic" data-main data-scroll-page className="main-page dynamic-page"><div className="page-sticky"><div className="dynamic-copy"><span className="eyebrow">PERSISTENT WORLD SIMULATION</span><h2>世界不会等待<br/>玩家上线。</h2><p>你看到的价格、任务和安全局势，都来自其他玩家已经做出的选择。观察世界，判断机会，然后让下一次变化因你而发生。</p><div className="world-scale"><span><b>1000+</b>星系</span><span><b>8</b>主要势力</span><span><b>≈700</b>空间站</span></div></div><div className="player-cycle"><b>世界持续运行<small>PLAYER DRIVEN</small></b>{['收集情报','判断机会','选择行动','收益 / 损失','影响世界'].map((x,i)=><div key={x} style={{'--n':i}}><small>0{i+1}</small><span>{x}</span></div>)}<footer><span>星际星闻</span><span>酒吧谣言</span><span>交易与航线变化</span></footer></div></div></section>
+    <CrewChapter lang={lang} assetUrl={assetUrl}/>
 
-    <section data-scroll-page className="transition-page loop-page"><div className="transition-overlay"><div className="simulation-detail"><header><span>WORLD SIMULATION / LIVE</span><h2>玩家行为如何生成新内容</h2></header><div className="simulation-flow"><div className="report-stack"><small>逐级上报</small>{['玩家行为','空间站状态','星系态势','星域冲突'].map(x=><b key={x}>{x}</b>)}</div><div className="decision-core"><span>势力决策</span><small>经济 · 安全 · 工业<br/>情报 · 政治</small></div><div className="dispatch-stack"><small>分级下发</small>{['空间站事件','星系事件','星域事件','军团目标'].map(x=><b key={x}>{x}</b>)}</div></div><div className="route-example"><span>运输线持续受袭</span><i className="fa-solid fa-arrow-right"/><span>库存减少 · 物价上涨</span><i className="fa-solid fa-arrow-right"/><span>护航与拦截任务</span><i className="fa-solid fa-arrow-right"/><b>势力介入 · 冲突升级</b></div><footer><span>任务变化</span><span>物价调整</span><span>巡逻变化</span><span>护航生成</span><span>局部战争</span></footer></div></div></section>
+    <LivingWorldChapter lang={lang} assetUrl={assetUrl}/>
 
-    <section id="gallery" data-main data-scroll-page className="main-page gallery-page"><div className="page-sticky"><div className="gallery-title"><span className="eyebrow">ART OF THE SECOND EPOCH</span><h2>新宇宙美术长廊</h2><p>从轨道都市到失落环世界，记录舰船之外仍在生长的宇宙。</p></div><div className="gallery-grid">{gallery.map((item,i)=><button key={item.src} onClick={()=>setArt(i)}><img src={assetUrl(item.src)} alt={item.title}/><span><b>{item.title}</b><small>{item.meta}</small></span></button>)}</div></div></section>
+    <section id="gallery" data-main data-scroll-page className="main-page gallery-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/><div className="gallery-title"><span className="eyebrow">ART OF THE SECOND EPOCH</span><h2>新宇宙美术长廊</h2><p>从轨道都市到失落环世界，记录舰船之外仍在生长的宇宙。</p></div><div className="gallery-grid">{gallery.map((item,i)=><button key={item.src} onClick={()=>setArt(i)}><img src={assetUrl(item.src)} alt={item.title}/><span><b>{item.title}</b><small>{item.meta}</small></span></button>)}</div></div></section>
 
     <section data-scroll-page className="transition-page gate-page"><div className="transition-overlay"><div className="gate-core"><i/><i/><i/></div><div className="gate-copy"><span>GATE SYNCHRONIZED</span><h2>下一个跃迁点，<br/>由你选择。</h2></div></div></section>
 
-    <section id="community" data-main data-scroll-page className="main-page community-page"><div className="page-sticky"><div className="community-title"><span className="eyebrow">JOIN THE FLEET</span><h2>加入星际社区</h2><p>与全球指挥官一起，开启你的银河征程</p><button className="primary-action join-now community-join" onClick={()=>{setJoined(false);setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div><div className="community-cards">{[
+    <section id="community" data-main data-scroll-page className="main-page community-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/><div className="community-title"><span className="eyebrow">JOIN THE FLEET</span><h2>加入星际社区</h2><p>与全球指挥官一起，开启你的银河征程</p><button className="primary-action join-now community-join" onClick={()=>{setJoined(false);setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div><div className="community-cards">{[
       ['fa-brands fa-steam','STEAM','将《第二纪元》加入愿望单，获取最新游戏资讯','加入愿望单'],
       ['fa-brands fa-discord','DISCORD','加入官方 Discord，与开发者和舰长直接交流','加入 Discord'],
       lang==='en'

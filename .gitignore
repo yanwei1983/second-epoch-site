@@ -7,3 +7,14 @@ out
 output
 site-build.tar.gz
 github-pages.zip
+
+# Installers and local deployment credentials
+*.apk
+*.aab
+*.exe
+*.msi
+*.7z
+.env
+.env.*
+!.env.example
+.wrangler/
