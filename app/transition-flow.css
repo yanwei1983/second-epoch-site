@@ -190,12 +190,12 @@
   background-size: cover;
   filter: saturate(.72) contrast(1.08);
 }
-.manifesto-page .transition-overlay:before { background-image: url('/journey.png'); }
-.quote-page .transition-overlay:before { background-image: url('/scene-deep.png'); }
+.manifesto-page .transition-overlay:before { background-image: url('https://cdn.polardog.cc/web/journey.9e5ffb163997.png'); }
+.quote-page .transition-overlay:before { background-image: url('https://cdn.polardog.cc/web/scene-deep.683963b52f3f.png'); }
 .quote-page .transition-overlay blockquote { max-width: 1050px; margin-left: auto; margin-right: auto; font-size: clamp(32px,4vw,56px); line-height: 1.45; }
 .ship-page .transition-overlay:before { background-image: radial-gradient(circle at 30% 50%,rgba(76,113,125,.28),transparent 45%); }
-.loop-page .transition-overlay:before { background-image: url('/scene-industry.png'); }
-.gate-page .transition-overlay:before { background-image: url('/scene-gate.png'); }
+.loop-page .transition-overlay:before { background-image: url('https://cdn.polardog.cc/web/scene-industry.71b6a160c563.png'); }
+.gate-page .transition-overlay:before { background-image: url('https://cdn.polardog.cc/web/scene-gate.0ac77a145bd0.png'); }
 .dust-page .transition-overlay { background: transparent !important; }
 .dust-page .transition-overlay:before { display: none; }
 .transition-page .transition-overlay:before { display: none !important; }
@@ -271,7 +271,7 @@
 /* Keep the base scene fixed and lift only the isolated foreground ship. */
 .hero-page .page-sticky:after {
   inset: 0;
-  background-image: url('/hero-foreground-ship.png');
+  background-image: url('https://cdn.polardog.cc/web/hero-foreground-ship.0a850dd0f32d.png');
   background-repeat: no-repeat;
   background-size: min(68vw,1200px) auto;
   background-position: 78% 108%;

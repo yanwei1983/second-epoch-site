@@ -3,11 +3,15 @@
 import { useEffect, useState } from 'react';
 import { localizeNode, pageMeta } from './i18n';
 import { CrewChapter, LivingWorldChapter } from './living-chapters';
+import assetManifest from './asset-manifest.json';
 
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-const assetUrl = path => publicBasePath && (path === publicBasePath || path.startsWith(`${publicBasePath}/`))
-  ? path
-  : `${publicBasePath}${path}`;
+const assetUrl = path => {
+  if (path.startsWith('https://') || path.startsWith('http://')) return path;
+  const localPath = publicBasePath && path.startsWith(`${publicBasePath}/`)
+    ? path.slice(publicBasePath.length) : path;
+  return assetManifest[localPath] || `${publicBasePath}${localPath}`;
+};
 
 const factions = [
   {id:'iron',name:'铁血军团',en:'IRON BLOOD LEGION',role:'秩序 / 防御 / 正规军',desc:'以军事秩序维持边境稳定。重装甲、严密编队与持续火力构成他们的战争语言。',ship:'破晓级护卫舰',shipDesc:'铁血军团·破晓级护卫舰（Dawn-Class Frigate）：机动性极强，搭载中/轻型武器与基础电子战模块，适合侦察、巡逻和快速拦截。采用轻量合金装甲，兼顾防护与灵活度。',strength:'装甲防御 92',weak:'机动效率 48'},
