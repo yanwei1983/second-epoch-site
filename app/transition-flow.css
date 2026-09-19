@@ -705,3 +705,5 @@ html[lang="en"] .ship-copy h2 {
   html[lang="en"] .hero-copy h1 { font-size: clamp(46px,14vw,76px); }
   html[lang="en"] .community-title h2 { font-size: 38px; }
 }
+
+.join-dialog{max-height:calc(100dvh - 32px);overflow-y:auto}.join-dialog textarea{width:100%;box-sizing:border-box;min-height:104px;resize:vertical;padding:12px 15px;border:1px solid rgba(207,229,234,.18);background:#020406;color:#edf4f5;font:inherit;line-height:1.6;outline:none}.join-dialog textarea:focus{border-color:#c9dadd}.join-dialog label small{color:#809399}.join-dialog .join-privacy{margin-top:12px;color:#84959a;font-size:11px;line-height:1.7}.join-dialog .join-error{margin:12px 0 0;color:#f2b1a3;font-size:12px}.join-dialog button:disabled{opacity:.6;cursor:wait}.join-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}

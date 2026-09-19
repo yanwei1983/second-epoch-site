@@ -1,0 +1,9 @@
+name = "tse"
+pages_build_output_dir = "./out"
+compatibility_date = "2026-09-19"
+
+[[d1_databases]]
+binding = "FEEDBACK_DB"
+database_name = "tse-feedback"
+database_id = "b256f3e3-7a1f-45d7-b8fb-0669b6d20bb1"
+migrations_dir = "migrations"

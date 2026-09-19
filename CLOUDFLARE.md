@@ -15,3 +15,13 @@ Small badges and crew portraits remain on Pages. No video files exist in this re
 See app/asset-manifest.json for URL mappings and reports/r2-web-migration.json for sizes and hashes.
 APK upload remains pending.
 The existing gh-pages branch remains available during migration.
+
+## Reservations and private feedback
+
+The reservation dialog posts nickname, email and optional message (max 2000 characters) to /api/reservations. Cloudflare Pages Functions writes to D1 `tse-feedback`, table `reservations`, via FEEDBACK_DB. No public read endpoint exists.
+
+View messages in Cloudflare Dashboard > Storage & databases > D1 > tse-feedback > Explore Data > reservations. Columns include UTC created_at, nickname, email, message and language.
+
+Schema: migrations/0001_reservations.sql. Bindings: wrangler.toml. Local backend checks: node --test tests/reservations.test.mjs. Only /api/reservations invokes a Function; static page and asset requests stay static.
+
+Successful submission saves data; it does not automatically send notification emails. On the Workers Free plan, D1 includes 100,000 rows written/day and 5 GB total account storage; free-plan quotas are enforced. No paid upgrade was enabled.

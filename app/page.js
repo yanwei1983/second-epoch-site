@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { localizeNode, pageMeta } from './i18n';
 import { CrewChapter, LivingWorldChapter } from './living-chapters';
 import assetManifest from './asset-manifest.json';
+import ReservationDialog from './reservation-dialog';
 
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const assetUrl = path => {
@@ -49,7 +50,6 @@ export default function Home(){
   const [ship,setShip]=useState(0);
   const [art,setArt]=useState(null);
   const [joinOpen,setJoinOpen]=useState(false);
-  const [joined,setJoined]=useState(false);
   const [menu,setMenu]=useState(false);
   const [lang,setLang]=useState('zh');
   const [languageReady,setLanguageReady]=useState(false);
@@ -135,7 +135,7 @@ export default function Home(){
     </header>
 
     <section id="home" data-main data-scroll-page className="main-page hero-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/>
-      <div className="hero-ship"/><div className="hero-copy"><span className="eyebrow">开放宇宙大规模星舰战争 MMO</span><h1>第二纪元</h1><p>驾驶你的舰船，集结值得信赖的船员，在持续变化的宇宙中选择自己的航路。</p><div className="hero-tags"><span>开放宇宙</span><span>核心船员养成</span><span>动态世界</span></div><button className="primary-action join-now" onClick={()=>{setJoined(false);setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div>
+      <div className="hero-ship"/><div className="hero-copy"><span className="eyebrow">开放宇宙大规模星舰战争 MMO</span><h1>第二纪元</h1><p>驾驶你的舰船，集结值得信赖的船员，在持续变化的宇宙中选择自己的航路。</p><div className="hero-tags"><span>开放宇宙</span><span>核心船员养成</span><span>动态世界</span></div><button className="primary-action join-now" onClick={()=>{setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div>
       <div className="hero-telemetry"><span>SECTOR / NEW ERA</span><b>世界持续运行中</b><small>舰长身份等待同步</small></div>
     </div></section>
 
@@ -166,7 +166,7 @@ export default function Home(){
 
     <section data-scroll-page className="transition-page gate-page"><div className="transition-overlay"><div className="gate-core"><i/><i/><i/></div><div className="gate-copy"><span>GATE SYNCHRONIZED</span><h2>下一个跃迁点，<br/>由你选择。</h2></div></div></section>
 
-    <section id="community" data-main data-scroll-page className="main-page community-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/><div className="community-title"><span className="eyebrow">JOIN THE FLEET</span><h2>加入星际社区</h2><p>与全球指挥官一起，开启你的银河征程</p><button className="primary-action join-now community-join" onClick={()=>{setJoined(false);setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div><div className="community-cards">{[
+    <section id="community" data-main data-scroll-page className="main-page community-page"><div className="page-sticky"><div className="chapter-shade" aria-hidden="true"/><div className="community-title"><span className="eyebrow">JOIN THE FLEET</span><h2>加入星际社区</h2><p>与全球指挥官一起，开启你的银河征程</p><button className="primary-action join-now community-join" onClick={()=>{setJoinOpen(true)}}>JOIN NOW <i className="fa-solid fa-arrow-right"/></button></div><div className="community-cards">{[
       ['fa-brands fa-steam','STEAM','将《第二纪元》加入愿望单，获取最新游戏资讯','加入愿望单'],
       ['fa-brands fa-discord','DISCORD','加入官方 Discord，与开发者和舰长直接交流','加入 Discord'],
       lang==='en'
@@ -175,7 +175,7 @@ export default function Home(){
     ].map(([icon,title,copy,action])=><article key={title}><i className={icon}/><h3>{title}</h3><p>{copy}</p><a href="#home">{action} <i className="fa-solid fa-arrow-right"/></a></article>)}</div><SiteFooter lang={lang}/></div></section>
 
     {art!==null&&<div className="art-modal" role="dialog" aria-modal="true"><button className="modal-close" onClick={()=>setArt(null)} aria-label="关闭"><i className="fa-solid fa-xmark"/></button><button className="modal-prev" onClick={()=>setArt((art-1+gallery.length)%gallery.length)} aria-label="上一张"><i className="fa-solid fa-arrow-left"/></button><figure><img src={assetUrl(gallery[art].src)} alt={gallery[art].title}/><figcaption><b>{gallery[art].title}</b><span>{gallery[art].meta}</span><small>{String(art+1).padStart(2,'0')} / {String(gallery.length).padStart(2,'0')}</small></figcaption></figure><button className="modal-next" onClick={()=>setArt((art+1)%gallery.length)} aria-label="下一张"><i className="fa-solid fa-arrow-right"/></button></div>}
-    {joinOpen&&<div className="join-dialog-backdrop" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setJoinOpen(false)}}><section className="join-dialog" role="dialog" aria-modal="true" aria-labelledby="join-title"><button className="join-close" onClick={()=>setJoinOpen(false)} aria-label="关闭预约窗口"><i className="fa-solid fa-xmark"/></button>{joined?<div className="join-success"><i className="fa-solid fa-check"/><span>RESERVATION RECEIVED</span><h2>舰长档案已登记</h2><p>测试资格开放后，我们会通过你的邮箱发送通知。</p><button onClick={()=>setJoinOpen(false)}>完成</button></div>:<form onSubmit={e=>{e.preventDefault();setJoined(true)}}><span>CAPTAIN REGISTRATION / 227</span><h2 id="join-title">立即预约</h2><p>登记你的舰长身份，等待裂隙航线开放。</p><label htmlFor="join-name">昵称</label><input id="join-name" name="nickname" type="text" placeholder="输入你的舰长昵称" required maxLength={24}/><label htmlFor="join-email">Email</label><input id="join-email" name="email" type="email" placeholder="captain@example.com" required/><button type="submit">提交预约 <i className="fa-solid fa-arrow-right"/></button></form>}</section></div>}
+    {joinOpen&&<ReservationDialog lang={lang} onClose={()=>setJoinOpen(false)}/>}
   </main>;
   return <>
     <title>{pageMeta[lang].title}</title>
