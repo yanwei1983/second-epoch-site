@@ -58,15 +58,15 @@ export default function GameSite({lang}){
   useEffect(()=>{
     // The explicit route wins over saved and browser language preferences.
     document.documentElement.lang=lang==='en'?'en':'zh-CN';
-    try{
-      localStorage.setItem(languageStorageKey,lang);
-    }catch{
-      // Persisting a preference is optional.
-    }
   },[lang]);
 
   function switchLanguage(next){
     if(next===lang)return;
+    try{
+      localStorage.setItem(languageStorageKey,next);
+    }catch{
+      // Persisting a preference is optional.
+    }
     const destination=new URL(window.location.href);
     destination.pathname=`${publicBasePath}${languagePaths[next]}`;
     window.location.assign(destination.href);
