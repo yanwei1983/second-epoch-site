@@ -13,8 +13,14 @@ import './overlay.css';
 import './transition-flow.css';
 import './living-chapters.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { languageAlternates } from './site-language.mjs';
 
-export const metadata = { title: '第二纪元 | 开放宇宙星舰战争 MMO', description: '驾驶舰船、招募船员，在持续变化的宇宙中探索、贸易与战斗。' };
+export const metadata = {
+  metadataBase: new URL('https://tse.polardog.cc'),
+  title: '第二纪元 | 开放宇宙星舰战争 MMO',
+  description: '驾驶舰船、招募船员，在持续变化的宇宙中探索、贸易与战斗。',
+  alternates: { canonical: '/', languages: languageAlternates },
+};
 
 export default function RootLayout({ children }) {
   return <html lang="zh-CN"><body>{children}</body></html>;

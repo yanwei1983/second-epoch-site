@@ -9,6 +9,14 @@ Root: repository root
 Do not set GITHUB_PAGES_BASE_PATH for Cloudflare.
 Target domain: tse.polardog.cc (associate through Pages Custom Domains).
 
+Language routes: `/cn/` is always Chinese and `/en/` is always English.
+The default `/` entry redirects to a remembered choice, or otherwise uses the
+browser's preferred language (`zh`, including regional variants, selects Chinese;
+other languages select English). Both language pages are statically exported.
+Language switching preserves the current chapter and query parameters, and stores
+the selected language when browser storage is available. Explicit routes take
+priority over stored preferences. Product links from polardog.cc use these routes.
+
 Large website images use https://cdn.polardog.cc/web/ in R2 bucket tse-assets (Standard).
 37 images, 87,023,356 bytes, verified byte-for-byte using SHA-256 before removing their public/ copies.
 Small badges and crew portraits remain on Pages. No video files exist in this repository.
