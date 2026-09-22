@@ -7,6 +7,12 @@ import { CrewChapter, LivingWorldChapter } from './living-chapters';
 import assetManifest from './asset-manifest.json';
 import ReservationDialog from './reservation-dialog';
 
+const discordLinkProps = {
+  href: 'https://discord.gg/grC2JM2NEZ',
+  target: '_blank',
+  rel: 'noopener noreferrer'
+};
+
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const assetUrl = path => {
   if (path.startsWith('https://') || path.startsWith('http://')) return path;
@@ -41,7 +47,7 @@ const nav = [
 
 function SiteFooter({lang}){
   const columns=[['游戏','关于游戏','派系介绍','玩法特色','新闻资讯'],['社区','官方论坛','Discord','Steam 社区','玩家手册'],['支持','帮助中心','系统要求','联系我们','反馈问题'],['法律','隐私政策','用户协议','Cookie 政策']];
-  const footer=<footer className="site-footer"><div className="footer-brand"><b><i className="fa-solid fa-ring"/> 第二纪元</b><p>征服银河<br/>从此刻开始</p></div>{columns.map(([title,...items])=><div className="footer-column" key={title}><b>{title}</b>{items.map(x=><a href="#home" key={x}>{x}</a>)}</div>)}<div className="footer-bottom"><span>© 2026 第二纪元. 保留所有权利。</span><div><a href="#home" aria-label="Steam"><i className="fa-brands fa-steam"/></a><a href="#home" aria-label="Discord"><i className="fa-brands fa-discord"/></a><a href="#home" aria-label="视频频道"><i className="fa-brands fa-youtube"/></a><a href="#home" aria-label="X"><i className="fa-brands fa-x-twitter"/></a></div><span>Second Epoch | PolarDog Studio</span></div></footer>;
+  const footer=<footer className="site-footer"><div className="footer-brand"><b><i className="fa-solid fa-ring"/> 第二纪元</b><p>征服银河<br/>从此刻开始</p></div>{columns.map(([title,...items])=><div className="footer-column" key={title}><b>{title}</b>{items.map(x=><a {...(x==='Discord'?discordLinkProps:{href:'#home'})} key={x}>{x}</a>)}</div>)}<div className="footer-bottom"><span>© 2026 第二纪元. 保留所有权利。</span><div><a href="#home" aria-label="Steam"><i className="fa-brands fa-steam"/></a><a {...discordLinkProps} aria-label="Discord"><i className="fa-brands fa-discord"/></a><a href="#home" aria-label="视频频道"><i className="fa-brands fa-youtube"/></a><a href="#home" aria-label="X"><i className="fa-brands fa-x-twitter"/></a></div><span>Second Epoch | PolarDog Studio</span></div></footer>;
   return localizeNode(footer,lang);
 }
 
@@ -176,7 +182,7 @@ export default function GameSite({lang}){
       lang==='en'
         ? ['fa-brands fa-x-twitter','X','Follow Second Epoch on X for development updates and community news','FOLLOW ON X']
         : ['fa-solid fa-book-bookmark','小红书','关注官方小红书，获取中文独家内容与开发动态','关注小红书']
-    ].map(([icon,title,copy,action])=><article key={title}><i className={icon}/><h3>{title}</h3><p>{copy}</p><a href="#home">{action} <i className="fa-solid fa-arrow-right"/></a></article>)}</div><SiteFooter lang={lang}/></div></section>
+    ].map(([icon,title,copy,action])=><article key={title}><i className={icon}/><h3>{title}</h3><p>{copy}</p><a {...(title==='DISCORD'?discordLinkProps:{href:'#home'})}>{action} <i className="fa-solid fa-arrow-right"/></a></article>)}</div><SiteFooter lang={lang}/></div></section>
 
     {art!==null&&<div className="art-modal" role="dialog" aria-modal="true"><button className="modal-close" onClick={()=>setArt(null)} aria-label="关闭"><i className="fa-solid fa-xmark"/></button><button className="modal-prev" onClick={()=>setArt((art-1+gallery.length)%gallery.length)} aria-label="上一张"><i className="fa-solid fa-arrow-left"/></button><figure><img src={assetUrl(gallery[art].src)} alt={gallery[art].title}/><figcaption><b>{gallery[art].title}</b><span>{gallery[art].meta}</span><small>{String(art+1).padStart(2,'0')} / {String(gallery.length).padStart(2,'0')}</small></figcaption></figure><button className="modal-next" onClick={()=>setArt((art+1)%gallery.length)} aria-label="下一张"><i className="fa-solid fa-arrow-right"/></button></div>}
     {joinOpen&&<ReservationDialog lang={lang} onClose={()=>setJoinOpen(false)}/>}

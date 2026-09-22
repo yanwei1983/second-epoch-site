@@ -24,6 +24,17 @@ See app/asset-manifest.json for URL mappings and reports/r2-web-migration.json f
 APK upload remains pending.
 The existing gh-pages branch remains available during migration.
 
+## Discord community
+
+The community card, footer link and footer icon use the same official invitation:
+https://discord.gg/grC2JM2NEZ
+
+The invitation opens THE SECOND EPOCH (server 1551977827690217502) at #welcome.
+Discord was configured with no expiration, unlimited uses and temporary membership
+disabled on 2026-09-23. Both `/en/` and `/cn/` use this invitation; the Discord
+community itself uses English for overseas players. Update `discordLinkProps` in
+`app/game-site.js` if the invitation is ever intentionally revoked or replaced.
+
 ## Reservations and private feedback
 
 The reservation dialog posts nickname, email and optional message (max 2000 characters) to /api/reservations. Cloudflare Pages Functions writes to D1 `tse-feedback`, table `reservations`, via FEEDBACK_DB. No public read endpoint exists.
